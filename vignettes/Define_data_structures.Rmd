@@ -1,0 +1,107 @@
+---
+title: "Define the input data structures"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Define_data_structures}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+Two main data structures are needed in order to run the SwapPriceR toolbox:
+
+```{r, echo = FALSE}
+`%>%` <- magrittr::`%>%`
+`%<>%` <- magrittr::`%<>%`
+```
+
+**Swap Structure**
+
+A swap can be defined as a list that includes the following needed fields:
+
+* **currency** (character) as per the ISO 4217 standard (only `"EUR"` is currently active)
+* **notional** (numeric)
+* **start.date** (Date)
+* **maturity.date** (Date)
+* **strike** (numeric)
+* **type** (list) with two sub-fields: *pay* and *receive* with one of the two being
+`"fixed"` and the other one `"floating"`
+* **standard** (logical) 
+
+Only if the field *standard* is set to FALSE then we need three additional fields
+
+* **time.unit** (list) with two sub-fields: *pay* and *receive* and numerical data as per the number of months for the frequency of the leg (ie. monthly would have a time.unit of 1, quarterly of 3, semiannual of 6 and annual of 12)
+* **dcc** (list) with two sub-fields: *pay* and *receive* and numerical data as per the RQuantLib helper
+* **calendar** (character) the holiday's calendar as per the RQuantLib helper
+
+The following one is an example of valid setup for both a standard swap and a non standard one.
+
+```{r define_swap}
+swap_standard <- list(currency = "EUR",
+                      notional = 10000000,
+                      start.date = lubridate::ymd(20070119),
+                      maturity.date = lubridate::ymd(20320119),
+                      strike = 0.00059820,
+                      type = list(pay = "floating", receive = "fixed"),
+                      standard = TRUE)
+
+swap_nonstandard <- list(currency = "EUR",
+                         notional = 10000000,
+                         start.date = lubridate::ymd(20070119),
+                         maturity.date = lubridate::ymd(20320119),
+                         strike = 0.00059820,
+                         type = list(pay = "floating", receive = "fixed"),
+                         standard = FALSE,
+                         time.unit = list(pay = 6, receive = 6),
+                         dcc = list(pay = 1, receive = 6),
+                         calendar = "TARGET")
+```
+
+Alternatively (and possibly more conveniently), you can parametrise your swap portfolio through Excel in a *csv* file like the following one:
+
+```{r Get_Swaps_Data, warning=FALSE, message=FALSE, echo=FALSE}
+SwapPricer::Swaps_basket %>% 
+  dplyr::mutate_at(dplyr::vars("notional"), ~formattable::comma(., digits = 0)) %>%
+  dplyr::mutate_at(dplyr::vars("strike"), formattable::percent) %>% 
+  knitr::kable(caption = "Swap portfolio", "html", align = "c") %>% 
+  kableExtra::scroll_box(width = "690px")
+```
+
+This will then be analysed by a function in the toolbox.
+
+**Discount Factor**
+
+This has to be sourced from a third party provider (...for now...). 
+In this case we downloaded the following data from Bloomberg.
+
+```{r Get_DF_Data, warning=FALSE, message=FALSE, echo=FALSE}
+SwapPricer::ir_curve %>% 
+  knitr::kable(caption = "Input from Bloomberg", "html") %>% 
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>% 
+  kableExtra::scroll_box(height = "500px")
+```
+
+From this data we extracted the two most important columns, which will be used in the code of the toolbox:
+
+* **t2m** which is the time to maturity of the different pillar points in the curve
+* **df** the discount factor calculated for each pillar point
+
+The following code was used to calculate these two 
+
+```{r, warning = FALSE}
+today <- lubridate::ymd(20190414)
+
+df.table <- SwapPricer::ir_curve %>% 
+  dplyr::mutate(`Maturity Date` = lubridate::mdy(`Maturity Date`)) %>% 
+  dplyr::rowwise(.) %>% 
+  dplyr::mutate(t2m = RQuantLib::yearFraction(today, `Maturity Date`, 6)) %>% 
+  na.omit %>% 
+  dplyr::select(t2m, Discount) %>%
+  dplyr::rename(df = Discount) %>% 
+  dplyr::ungroup(.) %>% 
+  dplyr::bind_rows(c(t2m = 0,df = 1)) %>% 
+  dplyr::arrange(t2m)
+
+df.table %>% 
+  knitr::kable(caption = "Discount Factor Curve", "html") %>% 
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>% 
+  kableExtra::scroll_box(height = "500px")
+```
