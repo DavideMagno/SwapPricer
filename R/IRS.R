@@ -242,15 +242,15 @@ SwapPricing <- function(today, swap, df.table) {
 #' @importFrom lubridate dmy
 #' @importFrom purrr pmap map map_df set_names
 #' @importFrom tibble is_tibble
+#' @importFrom anytime anydate
 #'
 #' @export
 SwapPortfolioPricing <- function(swap.portfolio, today, df.table) {
 
   if (tibble::is_tibble(swap.portfolio)) {
     swap.portfolio %<>%
-      # insert a control on how to manage non European dates
-      # dplyr::mutate_at(.vars = dplyr::vars(start.date, maturity.date),
-      #                  .funs = lubridate::dmy) %>%
+      dplyr::mutate_at(.vars = dplyr::vars(start.date, maturity.date),
+                       .funs = anytime::anydate) %>%
       purrr::pmap(list) %>%
       purrr::set_names(purrr::map(., "ID")) %>%
       purrr::map(SwapPortfolioFormatting)
