@@ -96,11 +96,12 @@ GetStandardList <- function(swap.tabular, variable) {
 #'
 #' @export
 GetStandard <- function(swap.tabular, leg, variable) {
-  swap.leg <- swap.tabular[paste0("type.",leg)] %>% as.character()
+  swap.leg <- swap.tabular[paste0("type.",leg)] %>%
+    as.character()
   SwapPricer::swap.standard %>%
-    dplyr::filter(grepl(swap.tabular$currency, currency),
-                  grepl(swap.leg, leg)) %>%
-    dplyr::select(!!rlang::quo(variable))
+    dplyr::filter(grepl(swap.tabular$currency, .$currency),
+                        grepl(swap.leg, .$leg)) %>%
+    .[[variable]]
 }
 
 #' Helper function to format standard swaps
@@ -117,9 +118,8 @@ GetStandard <- function(swap.tabular, leg, variable) {
 #'
 #' @export
 GetStandardCalendar <- function(swap.tabular) {
-
   SwapPricer::swap.standard.calendar %>%
-    dplyr::filter(grepl(swap.tabular$currency, currency)) %>%
+    dplyr::filter(grepl(swap.tabular$currency, .$currency)) %>%
     dplyr::select(calendar) %>%
     as.character
 }

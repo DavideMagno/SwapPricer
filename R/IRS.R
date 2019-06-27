@@ -29,18 +29,16 @@
 #' @export
 SwapCashflowCalculation  <- function(today, start.date, maturity.date, type,
                                      time.unit, dcc, calendar) {
-
-  cashflows <- seq(from = 0,
-                   to = (lubridate::year(maturity.date) -
-                           lubridate::year(start.date)) * 12,
-                   by = time.unit) %>%
-    purrr::map_dbl(~RQuantLib::advance(calendar = calendar,
+  s <- lubridate::year(start.date)
+  m <- lubridate::year(maturity.date)
+  cashflows <- ((seq_len((m - s) * (12/time.unit) + 1) - 1) * time.unit)
+  cashflows <- purrr::map_dbl(cashflows, ~RQuantLib::advance(calendar = calendar,
                                        dates = start.date,
                                        n = .x,
                                        timeUnit = 2,
                                        bdc = 1,
-                                       emr = TRUE)) %>%
-    lubridate::as_date() %>%
+                                       emr = TRUE))
+  cashflows <- lubridate::as_date(cashflows) %>%
     {if (start.date < today) append(today, .) else .}
 
   accrual.date <- cashflows[today - cashflows > 0]
@@ -144,13 +142,13 @@ OLDParSwapRateCalculation <- function(swap.dates, swap, df.table) {
 #' @importFrom tibble as_tibble
 #'
 #' @export
-CalculateAccrual <- function(swap.dates, leg.type, swap, direction) {
+CalculateAccrual <- function(swap.dates, leg.type, swap, direction,
+                             floating.history) {
 
   if (!is.null(swap.dates$fixing.date)) {
-    rate <- Quandl::Quandl("BOF/QS_D_IEUTIO6M",
-                           start_date = swap.dates$fixing.date,
-                           end_date = swap.dates$fixing.date) %>%
-      tibble::as_tibble(.) %>%
+
+    rate <- floating.history %>%
+      dplyr::filter(Date == swap.dates$fixing.date) %>%
       dplyr::select(Value) %>%
       as.double %>%
       `/`(100)
@@ -173,14 +171,14 @@ CalculateAccrual <- function(swap.dates, leg.type, swap, direction) {
 #' both the legs
 #' @param swap A list that contains the contract information
 #' @param df.table A tibble with the discount factor curve information
+#' @param floating.history A df with the historical data downloaded from Quandl
 #'
 #' @return A list with all the main pricing information for the contract
 #'
 #' @importFrom purrr map
 #'
 #' @export
-SwapCalculations <- function(swap.dates, swap, df.table) {
-
+SwapCalculations <- function(swap.dates, swap, df.table, floating.history) {
   swap.par.pricing <- OLDParSwapRateCalculation(swap.dates, swap, df.table)
 
   direction <- switch(swap$type$pay, "fixed" = 1, "floating" = -1)
@@ -189,7 +187,8 @@ SwapCalculations <- function(swap.dates, swap, df.table) {
     (swap.par.pricing$swap.rate - swap$strike) * direction
 
   accrual <- purrr::map2(swap.dates, names(swap$type),
-                         ~CalculateAccrual(.x, .y, swap, direction))
+                         ~CalculateAccrual(.x, .y, swap, direction,
+                                           floating.history))
 
   pv01 <- swap$notional/10000 * swap.par.pricing$annuity * direction
 
@@ -211,15 +210,11 @@ SwapCalculations <- function(swap.dates, swap, df.table) {
 #' @importFrom purrr pmap
 #'
 #' @export
-SwapPricing <- function(today, swap, df.table) {
-
-  # First step: calculate the cashflows for each instrument
+CashFlowPricing <- function(today, swap, df.table) {
   purrr::pmap(list(x = swap$type, y = swap$time.unit, z = swap$dcc),
               ~SwapCashflowCalculation(today, swap$start.date,
                                        swap$maturity.date, ..1, ..2, ..3,
-                                       swap$calendar)) %>%
-    # Second step: price each specific instrument
-    SwapCalculations(swap, df.table)
+                                       swap$calendar))
 }
 
 
@@ -240,7 +235,7 @@ SwapPricing <- function(today, swap, df.table) {
 #'
 #' @importFrom dplyr mutate_at mutate select everything
 #' @importFrom lubridate dmy
-#' @importFrom purrr pmap map map_df set_names
+#' @importFrom purrr pmap map map_df set_names map_depth compact
 #' @importFrom tibble is_tibble
 #' @importFrom anytime anydate
 #'
@@ -250,14 +245,27 @@ SwapPortfolioPricing <- function(swap.portfolio, today, df.table) {
   if (tibble::is_tibble(swap.portfolio)) {
     swap.portfolio %<>%
       dplyr::mutate_at(.vars = dplyr::vars(start.date, maturity.date),
-                       .funs = anytime::anydate) %>%
+                       .funs = lubridate::ymd) %>%
       purrr::pmap(list) %>%
       purrr::set_names(purrr::map(., "ID")) %>%
       purrr::map(SwapPortfolioFormatting)
   }
+  cashflows <- swap.portfolio %>%
+    purrr::map(~CashFlowPricing(today, .x, df.table))
 
-  swap.portfolio %>%
-    purrr::map_df(~SwapPricing(today, .x, df.table)) %>%
-    dplyr::mutate(swap.id = names(swap.portfolio)) %>%
-    dplyr::select(swap.id, dplyr::everything())
+  # cashflows %>%
+  #   purrr::map_depth(2, "fixing.date") %>%
+  #   purrr::map(purrr::compact) %>%
+  #   purrr::flatten(.) %>%
+  #   {do.call("c", .)} %>%
+  #   unname %>%
+  #   {Quandl::Quandl("BOF/QS_D_IEUTIO6M",
+  #                   start_date = min(.),
+  #                   end_date = max(.))} %>%
+  #   tibble::as_tibble(.) %>%
+  #   {purrr::pmap_df(list(x = cashflows, y = swap.portfolio,
+  #                        z = rep(list(.),length(cashflows))),
+  #                   ~SwapCalculations(..1, ..2, df.table, ..3))} %>%
+  #   dplyr::mutate(swap.id = names(swap.portfolio)) %>%
+  #   dplyr::select(swap.id, dplyr::everything())
 }
