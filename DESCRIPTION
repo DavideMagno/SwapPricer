@@ -18,7 +18,8 @@ Imports:
     stringr,
     tibble,
     magrittr,
-    data.table
+    data.table,
+    fmdates
 Suggests: 
     knitr,
     rmarkdown

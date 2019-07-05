@@ -25,6 +25,7 @@
 #' @importFrom tibble tibble
 #' @importFrom dplyr filter
 #' @importFrom magrittr "%>%" "%<>%"
+#' @importFrom fmdates year_frac
 #'
 #' @export
 SwapCashflowCalculation  <- function(today, start.date, maturity.date, type,
@@ -240,7 +241,6 @@ CashFlowPricing <- function(today, swap, df.table) {
 #' @importFrom lubridate dmy
 #' @importFrom purrr pmap map map_df set_names map_depth compact
 #' @importFrom tibble is_tibble
-#' @importFrom anytime anydate
 #'
 #' @export
 SwapPortfolioPricing <- function(swap.portfolio, today, df.table) {
