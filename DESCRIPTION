@@ -23,3 +23,5 @@ Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
+URL: https://github.com/DavideMagno/SwapPricer
+BugReports: https://github.com/DavideMagno/SwapPricer/issues
