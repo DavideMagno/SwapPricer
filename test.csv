@@ -1,0 +1,6 @@
+ID,currency,notional,start.date,maturity.date,strike,type,standard,time.unit.pay,time.unit.receive,dcc.pay,dcc.receive,calendar
+1,EUR,1.00E+07,19/01/2007,19/01/2032,0.0005982,receiver,TRUE,,,,,
+2,EUR,1.00E+07,24/04/2012,24/04/2042,0.01,payer,TRUE,,,,,
+3,EUR,2.00E+07,21/02/2012,21/02/2022,0.0025,receiver,TRUE,,,,,
+4,EUR,7500000,14/04/2021,14/04/2037,0.015,receiver,TRUE,,,,,
+5,EUR,1.50E+07,26/05/2014,26/05/2039,0.02,payer,FALSE,12,6,6,6,TARGET

@@ -9,15 +9,20 @@
 #' in the toolbox
 #'
 #' @importFrom purrr discard
-#' @importFrom stringr str_detect
+#' @importFrom stringr str_detect str_sub
 #'
 #' @export
 SwapPortfolioFormatting <- function(swap.tabular) {
   swap.tabular %<>%
     purrr::discard(is.na)
 
-  swap.tabular$type <- list(pay = swap.tabular$type.pay,
-                              receive = swap.tabular$type.receive)
+  test <- stringr::str_sub(swap.tabular$type,1,1)
+  if (grepl("P|p", test)) {
+    swap.tabular$type <- list(pay = "fixed", receive = "floating")
+  } else if (grepl("R|r", test)) {
+    swap.tabular$type <- list(pay = "floating", receive = "fixed")
+  }
+
   if (swap.tabular$standard == TRUE) {
     swap.tabular %<>%
       ApplyStandardConventions
@@ -92,15 +97,13 @@ GetStandardList <- function(swap.tabular, variable) {
 #'
 #' @return a standard feature for the contract
 #'
-#' @importFrom dplyr filter select
-#'
 #' @export
 GetStandard <- function(swap.tabular, leg, variable) {
-  swap.leg <- swap.tabular[paste0("type.",leg)] %>%
+  swap.leg <- swap.tabular$type[leg] %>%
     as.character()
+
   SwapPricer::swap.standard %>%
-    dplyr::filter(grepl(swap.tabular$currency, .$currency),
-                        grepl(swap.leg, .$leg)) %>%
+    {.[grepl(swap.tabular$currency, .$currency) & grepl(swap.leg, .$leg),]} %>%
     .[[variable]]
 }
 
@@ -114,12 +117,10 @@ GetStandard <- function(swap.tabular, leg, variable) {
 #'
 #' @return the standard calendar for the currency
 #'
-#' @importFrom dplyr filter select
-#'
 #' @export
 GetStandardCalendar <- function(swap.tabular) {
+
   SwapPricer::swap.standard.calendar %>%
-    dplyr::filter(grepl(swap.tabular$currency, .$currency)) %>%
-    dplyr::select(calendar) %>%
-    as.character
+    {.[grepl(swap.tabular$currency, .$currency),]} %>%
+    .[["calendar"]]
 }

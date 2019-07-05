@@ -17,7 +17,8 @@ Imports:
     purrr,
     stringr,
     tibble,
-    magrittr
+    magrittr,
+    data.table
 Suggests: 
     knitr,
     rmarkdown
