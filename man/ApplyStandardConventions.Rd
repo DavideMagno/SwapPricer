@@ -4,11 +4,14 @@
 \alias{ApplyStandardConventions}
 \title{Helper function to format standard swaps}
 \usage{
-ApplyStandardConventions(swap.tabular)
+ApplyStandardConventions(swap.tabular, test)
 }
 \arguments{
 \item{swap.tabular}{a list which includes the user defined characteristics
 of a swap contract}
+
+\item{test}{a character (`r` or `p`) representing if the swap if receiver or
+payer}
 }
 \value{
 a formatted version of the contract that is readable by the functions

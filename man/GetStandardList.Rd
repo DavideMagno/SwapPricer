@@ -4,13 +4,19 @@
 \alias{GetStandardList}
 \title{Helper function to format standard swaps}
 \usage{
-GetStandardList(swap.tabular, variable)
+GetStandardList(swap.tabular, variable, test, swap.standard)
 }
 \arguments{
 \item{swap.tabular}{a list which includes the user defined characteristics
 of a swap contract}
 
 \item{variable}{the contract feature that is being converted}
+
+\item{test}{a character (`r` or `p`) representing if the swap if receiver or
+payer}
+
+\item{swap.standard}{an internal data.table filtered for the currency of the
+swap}
 }
 \value{
 a flist of standard characteristics for both the legs

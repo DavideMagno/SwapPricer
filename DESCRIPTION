@@ -4,8 +4,12 @@ Title: Pricing of financial interest rate swaps in R
 Version: 0.1.0
 Author: Davide Magno
 Maintainer: Davide Magno <davide.magno@curiousfrm.com>
-Description: This toolbox calculates the price and risk characteristics of interest rate swaps, a widely used financial instrument 
-License: MIT + file LICENSE
+Description: This toolbox calculates the price and risk characteristics of 
+    interest rate swaps, a widely used financial instrument. Please refer to the
+    vignettes to understand how to setup the input data and run the main 
+    routines. For the current version of the toolbox, we recommend to price 
+    solely standard EUR swaps. In the next releases we will extend to the major
+    currencies and with non standard coupon conventions. 
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
@@ -18,11 +22,17 @@ Imports:
     stringr,
     tibble,
     magrittr,
-    data.table,
-    fmdates
+    fmdates,
+    rlang (>= 0.1.2)
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown,
+    roxygen2,
+    formattable,
+    kableExtra
+Depends:
+    R (>= 2.10)
 VignetteBuilder: knitr
 URL: https://github.com/DavideMagno/SwapPricer
 BugReports: https://github.com/DavideMagno/SwapPricer/issues
+License: MIT + file LICENSE

@@ -20,11 +20,10 @@
 #'
 #' @importFrom lubridate year as_date
 #' @importFrom purrr map_dbl
-#' @importFrom RQuantLib advance yearFraction
+#' @importFrom RQuantLib advance
 #' @importFrom stringr str_detect
 #' @importFrom tibble tibble
 #' @importFrom dplyr filter
-#' @importFrom magrittr "%>%" "%<>%"
 #' @importFrom fmdates year_frac
 #'
 #' @export
@@ -40,35 +39,32 @@ SwapCashflowCalculation  <- function(today, start.date, maturity.date, type,
                                        timeUnit = 2,
                                        bdc = 1,
                                        emr = TRUE)) %>%
-    lubridate::as_date() %>%
-    {if (start.date < today) append(today, .) else .}
+    lubridate::as_date()
+
+  if (start.date < today) cashflows <- c(cashflows, today)
 
   accrual.date <- cashflows[today - cashflows > 0]
 
   if (!identical(as.double(accrual.date), double(0))) {
     accrual.date  %<>%  max()
     if (stringr::str_detect(type, "floating")) {
-      fixing.date <- accrual.date %>%
-        {RQuantLib::advance(calendar = calendar,
-                            dates = .,
-                            n = -2,
-                            timeUnit = 0,
-                            bdc = 1,
-                            emr = TRUE)}
+      fixing.date <- RQuantLib::advance(calendar = calendar,
+                                        dates = accrual.date,
+                                        n = -2,
+                                        timeUnit = 0,
+                                        bdc = 1,
+                                        emr = TRUE)
     } else {
       fixing.date <- NULL
     }
-    accrual.yf <- accrual.date %>%
-      {fmdates::year_frac(today, ., dcc)} %>%
-      `*`(-1)
+    accrual.yf <- -fmdates::year_frac(today, accrual.date, dcc)
   } else {
     fixing.date <- NULL
     accrual.yf <- 0
   }
 
-  cashflows  %<>%
-    {fmdates::year_frac(today, ., dcc)} %>%
-    {tibble::tibble(yf = .[. >= 0])}
+  cashflows <-  fmdates::year_frac(today, cashflows, dcc)
+  cashflows <- tibble::tibble(yf = cashflows[cashflows >= 0])
 
   return(list(cashflows = cashflows, accrual.yf = accrual.yf,
               fixing.date = fixing.date))
@@ -110,12 +106,13 @@ OLDParSwapRate <- function(swap.cf){
 #'
 #' @importFrom dplyr mutate
 #' @importFrom purrr pluck
+#' @importFrom stats approx
 OLDParSwapRateCalculation <- function(swap.dates, swap, df.table) {
 
   switch(swap$type$pay,
          "fixed" = swap.dates$pay$cashflows,
          "floating" = swap.dates$receive$cashflows) %>%
-    dplyr::mutate(df = approx(df.table$t2m, log(df.table$df), .$yf) %>%
+    dplyr::mutate(df = stats::approx(df.table$t2m, log(df.table$df), .data$yf) %>%
                     purrr::pluck("y") %>%
                     exp) %>%
     OLDParSwapRate
@@ -134,6 +131,8 @@ OLDParSwapRateCalculation <- function(swap.dates, swap, df.table) {
 #' @param swap A list with the swap's carachteristics
 #' @param direction A parameter that gets a value of 1 for receiver swaps and -1
 #' for payer swaps
+#' @param floating.history A table downloaded automatically from Quandl with the
+#' historical floating rates
 #'
 #' @return The accrual amount
 #'
@@ -144,17 +143,16 @@ CalculateAccrual <- function(swap.dates, leg.type, swap, direction,
                              floating.history) {
 
   if (!is.null(swap.dates$fixing.date)) {
-    fixing_row <- floating.history %>%
-      data.table::as.data.table(.) %>%
-      subset(Date %in% swap.dates$fixing.date)
+    fixing.row <- floating.history[floating.history$Date %in%
+                                     swap.dates$fixing.date,]
 
-    if (nrow(fixing_row) == 0) {
-      fixing_row <- (floating.history$Date - swap.dates$fixing.date) %>%
-        {which(. == max(.[. < 0]))} %>%
-        {floating.history[.,]}
+    if (nrow(fixing.row) == 0) {
+      closest.dates <- (floating.history$Date - swap.dates$fixing.date)
+      fixing.row <- floating.history[
+        which(closest.dates == max(closest.dates[closest.dates < 0])),]
     }
 
-    rate <- fixing_row[["Value"]]/100
+    rate <- fixing.row[["Value"]]/100
 
   } else {
     rate <- swap$strike
@@ -239,36 +237,36 @@ CashFlowPricing <- function(today, swap, df.table) {
 #'
 #' @importFrom dplyr mutate_at mutate select everything
 #' @importFrom lubridate dmy
-#' @importFrom purrr pmap map map_df set_names map_depth compact
+#' @importFrom purrr pmap map map_df set_names map_depth compact flatten
 #' @importFrom tibble is_tibble
+#' @importFrom Quandl Quandl
 #'
 #' @export
 SwapPortfolioPricing <- function(swap.portfolio, today, df.table) {
 
   if (tibble::is_tibble(swap.portfolio)) {
     swap.portfolio %<>%
-      dplyr::mutate_at(.vars = dplyr::vars(start.date, maturity.date),
+      dplyr::mutate_at(.vars = dplyr::vars(.data$start.date,
+                                           .data$maturity.date),
                        .funs = lubridate::dmy) %>%
       purrr::pmap(list) %>%
-      purrr::set_names(purrr::map(., "ID")) %>%
+      purrr::set_names(swap.portfolio$ID) %>%
       purrr::map(SwapPortfolioFormatting)
   }
 
   cashflows <- swap.portfolio %>%
     purrr::map(~CashFlowPricing(today, .x, df.table))
-
-    cashflows %>%
-      purrr::map_depth(2, "fixing.date") %>%
-      purrr::map(purrr::compact) %>%
-      purrr::flatten(.) %>%
-      {do.call("c", .)} %>%
-      unname %>%
-      {Quandl::Quandl("BOF/QS_D_IEUTIO6M",
-                      start_date = min(.),
-                      end_date = max(.))} %>%
-    {purrr::pmap_df(list(x = cashflows, y = swap.portfolio,
-                         z = rep(list(.),length(cashflows))),
-                    ~SwapCalculations(..1, ..2, df.table, ..3))} %>%
+  fixing.dates <- cashflows %>%
+    purrr::map_depth(2, "fixing.date") %>%
+    purrr::map(purrr::compact) %>%
+    purrr::flatten()
+  fixing.dates <- unname(do.call("c", fixing.dates))
+  floating.history <- Quandl::Quandl("BOF/QS_D_IEUTIO6M",
+                    start_date = min(fixing.dates),
+                    end_date = max(fixing.dates))
+  purrr::pmap_df(list(x = cashflows, y = swap.portfolio,
+                         z = rep(list(floating.history),length(cashflows))),
+                    ~SwapCalculations(..1, ..2, df.table, ..3)) %>%
     dplyr::mutate(swap.id = names(swap.portfolio)) %>%
-    dplyr::select(swap.id, dplyr::everything())
+    dplyr::select(.data$swap.id, dplyr::everything())
 }

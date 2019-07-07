@@ -17,7 +17,7 @@ library(SwapPricer)
 
 today <- lubridate::ymd(20190414)
 
-df.table <- SwapPricer::ir_curve %>% 
+df.table <- SwapPricer:::ir.curve %>% 
   dplyr::mutate(`Maturity Date` = lubridate::mdy(`Maturity Date`)) %>% 
   dplyr::rowwise(.) %>% 
   dplyr::mutate(t2m = RQuantLib::yearFraction(today, `Maturity Date`, 6)) %>% 

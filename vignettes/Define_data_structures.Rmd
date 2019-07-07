@@ -22,8 +22,7 @@ A swap can be defined as a list that includes the following needed fields:
 * **start.date** (Date)
 * **maturity.date** (Date)
 * **strike** (numeric)
-* **type** (list) with two sub-fields: *pay* and *receive* with one of the two being
-`"fixed"` and the other one `"floating"`
+* **type** (string) either *payer* or *receiver*. It is not case-sensitive.
 * **standard** (logical) 
 
 Only if the field *standard* is set to FALSE then we need three additional fields
@@ -40,7 +39,7 @@ swap_standard <- list(currency = "EUR",
                       start.date = lubridate::ymd(20070119),
                       maturity.date = lubridate::ymd(20320119),
                       strike = 0.00059820,
-                      type = list(pay = "floating", receive = "fixed"),
+                      type = "receiver",
                       standard = TRUE)
 
 swap_nonstandard <- list(currency = "EUR",
@@ -48,24 +47,39 @@ swap_nonstandard <- list(currency = "EUR",
                          start.date = lubridate::ymd(20070119),
                          maturity.date = lubridate::ymd(20320119),
                          strike = 0.00059820,
-                         type = list(pay = "floating", receive = "fixed"),
+                         type = "receiver",
                          standard = FALSE,
-                         time.unit = list(pay = 6, receive = 6),
+                         time.unit = list(pay = 6, receive = 12),
                          dcc = list(pay = 1, receive = 6),
                          calendar = "TARGET")
 ```
 
-Alternatively (and possibly more conveniently), you can parametrise your swap portfolio through Excel in a *csv* file like the following one:
+**Please note that as at version 0.1.0 the toolbox is not able to price:**
+
+**1) Non EUR swaps**
+
+**2) EUR swaps that do not pay quarterly on the variable rate**
+
+**We are working to solve both these issues in the next release**
+
+Alternatively (and possibly more conveniently), you can parametrise your swap 
+portfolio through Excel in a *csv* file like the following one:
 
 ```{r Get_Swaps_Data, warning=FALSE, message=FALSE, echo=FALSE}
-SwapPricer::Swaps_basket %>% 
+SwapPricer::swap.basket %>% 
   dplyr::mutate_at(dplyr::vars("notional"), ~formattable::comma(., digits = 0)) %>%
   dplyr::mutate_at(dplyr::vars("strike"), formattable::percent) %>% 
   knitr::kable(caption = "Swap portfolio", "html", align = "c") %>% 
   kableExtra::scroll_box(width = "690px")
 ```
 
-This will then be analysed by a function in the toolbox.
+**Another important thing to note is that if you upload the csv file, the dates
+must be in a dmy format. We are working on relaxing this constraint, but we 
+haven't found the most suitable toolbox to help us (yes, we also tried anytime
+and we were not fully impressed)**
+
+This input will then be treated by a function in the toolbox to put in the list
+format we have specified above.
 
 **Discount Factor**
 
@@ -73,7 +87,7 @@ This has to be sourced from a third party provider (...for now...).
 In this case we downloaded the following data from Bloomberg.
 
 ```{r Get_DF_Data, warning=FALSE, message=FALSE, echo=FALSE}
-SwapPricer::ir_curve %>% 
+SwapPricer:::ir.curve %>% 
   knitr::kable(caption = "Input from Bloomberg", "html") %>% 
   kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>% 
   kableExtra::scroll_box(height = "500px")
@@ -84,24 +98,25 @@ From this data we extracted the two most important columns, which will be used i
 * **t2m** which is the time to maturity of the different pillar points in the curve
 * **df** the discount factor calculated for each pillar point
 
-The following code was used to calculate these two 
+The following code was used to calculate these two columns
 
 ```{r, warning = FALSE}
 today <- lubridate::ymd(20190414)
 
-df.table <- SwapPricer::ir_curve %>% 
-  dplyr::mutate(`Maturity Date` = lubridate::mdy(`Maturity Date`)) %>% 
-  dplyr::rowwise(.) %>% 
-  dplyr::mutate(t2m = RQuantLib::yearFraction(today, `Maturity Date`, 6)) %>% 
-  na.omit %>% 
-  dplyr::select(t2m, Discount) %>%
-  dplyr::rename(df = Discount) %>% 
-  dplyr::ungroup(.) %>% 
-  dplyr::bind_rows(c(t2m = 0,df = 1)) %>% 
-  dplyr::arrange(t2m)
+# df.table <- SwapPricer:::ir.curve %>% 
+#   dplyr::mutate(`Maturity Date` = lubridate::mdy(`Maturity Date`)) %>% 
+#   dplyr::rowwise(.) %>% 
+#   dplyr::mutate(t2m = RQuantLib::yearFraction(today, `Maturity Date`, 6)) %>% 
+#   na.omit %>% 
+#   dplyr::select(t2m, Discount) %>%
+#   dplyr::rename(df = Discount) %>% 
+#   dplyr::ungroup(.) %>% 
+#   dplyr::bind_rows(c(t2m = 0,df = 1)) %>% 
+#   dplyr::arrange(t2m)
 
-df.table %>% 
+SwapPricer::df.table %>% 
   knitr::kable(caption = "Discount Factor Curve", "html") %>% 
   kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>% 
   kableExtra::scroll_box(height = "500px")
 ```
+Now you have the two most important inputs that are needed to run your pricer.

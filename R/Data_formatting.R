@@ -25,16 +25,16 @@ SwapPortfolioFormatting <- function(swap.tabular) {
 
   if (swap.tabular$standard == TRUE) {
     swap.tabular %<>%
-      ApplyStandardConventions
+      ApplyStandardConventions(test)
   } else {
     swap.tabular$time.unit <- list(pay = swap.tabular$time.unit.pay,
-                                     receive = swap.tabular$time.unit.receive)
+                                   receive = swap.tabular$time.unit.receive)
     swap.tabular$dcc <- list(pay = swap.tabular$dcc.pay,
-                               receive = swap.tabular$dcc.receive)
+                             receive = swap.tabular$dcc.receive)
   }
 
   swap.tabular %<>%
-    purrr::discard(stringr::str_detect(names(.),
+    purrr::discard(stringr::str_detect(swap.tabular %>% names,
                                        "pay|receive|standard|ID") == TRUE)
 }
 
@@ -46,20 +46,26 @@ SwapPortfolioFormatting <- function(swap.tabular) {
 #'
 #' @param swap.tabular a list which includes the user defined characteristics
 #' of a swap contract
+#' @param test a character (`r` or `p`) representing if the swap if receiver or
+#' payer
 #'
 #' @return a formatted version of the contract that is readable by the functions
 #' in the toolbox
 #'
 #' @export
-ApplyStandardConventions <- function(swap.tabular) {
+ApplyStandardConventions <- function(swap.tabular, test) {
+  swap.standard <- swap.standard[grepl(swap.tabular$currency,
+                                       swap.standard$currency),]
+
   swap.tabular$time.unit <- swap.tabular %>%
-    GetStandardList("time.unit")
+    GetStandardList("time.unit", test, swap.standard)
 
   swap.tabular$dcc <- swap.tabular %>%
-    GetStandardList("dcc")
+    GetStandardList("dcc", test, swap.standard)
 
-  swap.tabular$calendar <- swap.tabular %>%
-    GetStandardCalendar
+  swap.tabular$calendar <-
+    swap.standard.calendar[grepl(swap.tabular$currency,
+                                 swap.standard.calendar$currency),][["calendar"]]
 
   return(swap.tabular)
 }
@@ -72,55 +78,26 @@ ApplyStandardConventions <- function(swap.tabular) {
 #' @param swap.tabular a list which includes the user defined characteristics
 #' of a swap contract
 #' @param variable the contract feature that is being converted
+#' @param test a character (`r` or `p`) representing if the swap if receiver or
+#' payer
+#' @param swap.standard an internal data.table filtered for the currency of the
+#' swap
 #'
 #' @return a flist of standard characteristics for both the legs
 #'
-#' @importFrom purrr transpose flatten
-#'
 #' @export
-GetStandardList <- function(swap.tabular, variable) {
-  list(pay = GetStandard(swap.tabular, "pay", variable),
-       receive = GetStandard(swap.tabular, "receive", variable)) %>%
-    purrr::transpose(.) %>%
-    purrr::flatten(.)
-}
+GetStandardList <- function(swap.tabular, variable, test, swap.standard) {
 
-#' Helper function to format standard swaps
-#'
-#' This function calls other helper functions to format a swap list from the
-#' tabular version to the target one
-#'
-#' @param swap.tabular a list which includes the user defined characteristics
-#' of a swap contract
-#' @param leg specifies whether the leg is payer or receiver
-#' @param variable the contract feature that is being converted
-#'
-#' @return a standard feature for the contract
-#'
-#' @export
-GetStandard <- function(swap.tabular, leg, variable) {
-  swap.leg <- swap.tabular$type[leg] %>%
-    as.character()
-
-  SwapPricer::swap.standard %>%
-    {.[grepl(swap.tabular$currency, .$currency) & grepl(swap.leg, .$leg),]} %>%
-    .[[variable]]
-}
-
-#' Helper function to format standard swaps
-#'
-#' This function calls other helper functions to format a swap list from the
-#' tabular version to the target one
-#'
-#' @param swap.tabular a list which includes the user defined characteristics
-#' of a swap contract
-#'
-#' @return the standard calendar for the currency
-#'
-#' @export
-GetStandardCalendar <- function(swap.tabular) {
-
-  SwapPricer::swap.standard.calendar %>%
-    {.[grepl(swap.tabular$currency, .$currency),]} %>%
-    .[["calendar"]]
+  if (grepl("R|r", test)) {
+    convention <- list(pay = swap.standard[grepl("floating", swap.standard$leg),
+                                           variable],
+                       receive = swap.standard[grepl("fixed",
+                                                     swap.standard$leg),variable])
+  } else {
+    convention <- list(pay = swap.standard[grepl("fixed", swap.standard$leg),
+                                           variable],
+                       receive = swap.standard[grepl("floating",
+                                                     swap.standard$leg),variable])
+    }
+  return(convention)
 }

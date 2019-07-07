@@ -17,6 +17,9 @@ receiver}
 
 \item{direction}{A parameter that gets a value of 1 for receiver swaps and -1
 for payer swaps}
+
+\item{floating.history}{A table downloaded automatically from Quandl with the
+historical floating rates}
 }
 \value{
 The accrual amount
