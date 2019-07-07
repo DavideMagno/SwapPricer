@@ -9,7 +9,7 @@ Description: This toolbox calculates the price and risk characteristics of
     vignettes to understand how to setup the input data and run the main 
     routines. For the current version of the toolbox, we recommend to price 
     solely standard EUR swaps. In the next releases we will extend to the major
-    currencies and with non standard coupon conventions. 
+    currencies with non standard coupon conventions and dual-curve construction. 
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1

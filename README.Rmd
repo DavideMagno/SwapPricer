@@ -13,16 +13,27 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
-# SwapPricer
+# SwapPricer <img src="man/figures/SwapPricerHex.png" align="right" height="149" width="128.5"/>
+
 
 <!-- badges: start -->
 [![Project Status:Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/SwapPricer)](https://CRAN.R-project.org/package=SwapPricer)
 
 <!-- badges: end -->
 
 The goal of SwapPricer is to allow you to price a book of interest rate swaps (IRS).
 IRS is the most traded over the counter financial derivative in the world and now
-you can easily price it in R. More details can be found [here](https://en.wikipedia.org/wiki/Interest_rate_swap)
+you can easily price it in R. More details on the financial characteristics of
+this contract can be found [here](https://en.wikipedia.org/wiki/Interest_rate_swap)
+
+Please note that as at version 0.1.0 the toolbox is able to price:
+
+1) EUR swaps that pay semi-annually on the floating leg
+
+2) Using a one-curve framework
+
+**We are working to introduce all these issues in the next releases**
 
 ## Installation
 

@@ -10,18 +10,13 @@ The `SwapPricer` package allows you to price a book of interest rate swaps (IRS)
 IRS is the most traded over the counter financial derivative in the world and now
 you can easily price it in R.  
 
-Please note that as at version 0.1.0 the toolbox is not able to price:
+Please note that as at version 0.1.0 the toolbox is able to price:
 
-1) Non EUR swaps
+1) EUR swaps that pay semi-annually on the floating leg
 
-2) EUR swaps that do not pay quarterly on the variable rate
+2) Using a one-curve framework
 
-Another important thing to note is that if you upload the csv file, the dates
-must be in a dmy format. We are working on relaxing this constraint, but we 
-haven't found the most suitable toolbox to help us (yes, we also tried anytime
-and we were not fully impressed)
-
-**We are working to solve all these issues in the next releases**
+**We are working to improve the toolbox in the next releases**
 
 Two main data structures are needed in order to run the SwapPriceR toolbox:
 
@@ -71,8 +66,6 @@ swap_nonstandard <- list(currency = "EUR",
                          calendar = "TARGET")
 ```
 
-
-
 Alternatively (and possibly more conveniently), you can parametrise your swap 
 portfolio through Excel in a *csv* file like the following one:
 
@@ -83,6 +76,12 @@ SwapPricer::swap.basket %>%
   knitr::kable(caption = "Swap portfolio", "html", align = "c") %>% 
   kableExtra::scroll_box(width = "690px")
 ```
+
+**Another important thing to note is that if you upload the csv file, the dates
+must be in a dmy format. We are working on relaxing this constraint, but we 
+haven't found the most suitable toolbox to help us (yes, we also tried `anytime`
+and we were not fully impressed)**
+
 This input will then be treated by a function in the toolbox to put in the list
 format we have specified above.
 
@@ -97,11 +96,6 @@ SwapPricer:::ir.curve %>%
   kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>% 
   kableExtra::scroll_box(height = "500px")
 ```
-
-** Please note that for now we are not using dual curve construction and CSA
-pricing. This is going to be part of a future release. We have decided to 
-release the package anyway for you to familiarize with the package functions
-first.**
 
 From this data we extracted the two most important columns, which will be used in the code of the toolbox:
 
