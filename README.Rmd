@@ -1,0 +1,83 @@
+---
+output: github_document
+always_allow_html: yes
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+# SwapPricer
+
+<!-- badges: start -->
+[![Project Status:Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
+
+<!-- badges: end -->
+
+The goal of SwapPricer is to allow you to price a book of interest rate swaps (IRS).
+IRS is the most traded over the counter financial derivative in the world and now
+you can easily price it in R. More details can be found [here](https://en.wikipedia.org/wiki/Interest_rate_swap)
+
+## Installation
+
+<!-- You can install the released version of SwapPricer from [CRAN](https://CRAN.R-project.org) with: -->
+
+<!-- ``` r -->
+<!-- install.packages("SwapPricer") -->
+<!-- ``` -->
+
+You can for now just install the development version from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("DavideMagno/SwapPricer")
+```
+## Example
+
+The main function of the toolbox is `SwapPortfolioPricing` which uses just three
+inputs:
+
+1) A table with the characteristics of the swap
+
+2) The date at which the swaps are being priced
+
+3) A table with the discounting factor curve
+
+Examples of items 1 and 3 have been provided with the package.
+
+```{r example}
+library(SwapPricer)
+SwapPortfolioPricing(SwapPricer::swap.basket, lubridate::ymd(20190414), SwapPricer::df.table)
+```
+
+This function returns a table that can be easily used for reporting like below
+
+```{r cars, echo = FALSE}
+SwapPricer::SwapPortfolioPricing(SwapPricer::swap.basket, lubridate::ymd(20190414), SwapPricer::df.table) %>% 
+  dplyr::mutate_at(dplyr::vars("clean.mv","dirty.mv","accrual.pay","accrual.receive","pv01"),
+                   formattable::comma) %>%
+  dplyr::mutate_at(dplyr::vars("par"), formattable::percent) %>%
+  knitr::kable(caption = "Pricing results", "html") %>%
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed","responsive"))
+```
+
+## Learning More ##
+
+The vignettes are a great place to learn more about SwapPricer.
+
+If you are installing from github and want the vignettes, you'll need to run the following 
+commands first:
+
+```{r, eval = FALSE}
+devtools::install_github("DavideMagno/SwapPricer", build_vignettes = TRUE)
+library(SwapPricer)
+```
+
+You can then access them from R with the `vignette()` command.
+

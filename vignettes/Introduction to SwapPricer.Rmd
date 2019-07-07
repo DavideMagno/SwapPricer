@@ -1,11 +1,28 @@
 ---
-title: "Define the input data structures"
+title: "Introduction to SwapPricer"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Define_data_structures}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+The `SwapPricer` package allows you to price a book of interest rate swaps (IRS).
+IRS is the most traded over the counter financial derivative in the world and now
+you can easily price it in R.  
+
+**Please note that as at version 0.1.0 the toolbox is not able to price:**
+
+**1) Non EUR swaps**
+
+**2) EUR swaps that do not pay quarterly on the variable rate**
+
+** Another important thing to note is that if you upload the csv file, the dates
+must be in a dmy format. We are working on relaxing this constraint, but we 
+haven't found the most suitable toolbox to help us (yes, we also tried anytime
+and we were not fully impressed) **
+
+**We are working to solve all these issues in the next releases**
+
 Two main data structures are needed in order to run the SwapPriceR toolbox:
 
 ```{r, echo = FALSE}
@@ -54,30 +71,18 @@ swap_nonstandard <- list(currency = "EUR",
                          calendar = "TARGET")
 ```
 
-**Please note that as at version 0.1.0 the toolbox is not able to price:**
 
-**1) Non EUR swaps**
-
-**2) EUR swaps that do not pay quarterly on the variable rate**
-
-**We are working to solve both these issues in the next release**
 
 Alternatively (and possibly more conveniently), you can parametrise your swap 
 portfolio through Excel in a *csv* file like the following one:
 
-```{r Get_Swaps_Data, warning=FALSE, message=FALSE, echo=FALSE}
+```{r Get_Swaps_Data, warning=FALSE, message=FALSE}
 SwapPricer::swap.basket %>% 
   dplyr::mutate_at(dplyr::vars("notional"), ~formattable::comma(., digits = 0)) %>%
   dplyr::mutate_at(dplyr::vars("strike"), formattable::percent) %>% 
   knitr::kable(caption = "Swap portfolio", "html", align = "c") %>% 
   kableExtra::scroll_box(width = "690px")
 ```
-
-**Another important thing to note is that if you upload the csv file, the dates
-must be in a dmy format. We are working on relaxing this constraint, but we 
-haven't found the most suitable toolbox to help us (yes, we also tried anytime
-and we were not fully impressed)**
-
 This input will then be treated by a function in the toolbox to put in the list
 format we have specified above.
 
@@ -93,6 +98,11 @@ SwapPricer:::ir.curve %>%
   kableExtra::scroll_box(height = "500px")
 ```
 
+** Please note that for now we are not using dual curve construction and CSA
+pricing. This is going to be part of a future release. We have decided to 
+release the package anyway for you to familiarize with the package functions
+first.**
+
 From this data we extracted the two most important columns, which will be used in the code of the toolbox:
 
 * **t2m** which is the time to maturity of the different pillar points in the curve
@@ -103,20 +113,23 @@ The following code was used to calculate these two columns
 ```{r, warning = FALSE}
 today <- lubridate::ymd(20190414)
 
-# df.table <- SwapPricer:::ir.curve %>% 
-#   dplyr::mutate(`Maturity Date` = lubridate::mdy(`Maturity Date`)) %>% 
-#   dplyr::rowwise(.) %>% 
-#   dplyr::mutate(t2m = RQuantLib::yearFraction(today, `Maturity Date`, 6)) %>% 
-#   na.omit %>% 
-#   dplyr::select(t2m, Discount) %>%
-#   dplyr::rename(df = Discount) %>% 
-#   dplyr::ungroup(.) %>% 
-#   dplyr::bind_rows(c(t2m = 0,df = 1)) %>% 
-#   dplyr::arrange(t2m)
-
 SwapPricer::df.table %>% 
   knitr::kable(caption = "Discount Factor Curve", "html") %>% 
   kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>% 
   kableExtra::scroll_box(height = "500px")
 ```
 Now you have the two most important inputs that are needed to run your pricer.
+
+```{r}
+result <- SwapPricer::SwapPortfolioPricing(SwapPricer::swap.basket, today, SwapPricer::df.table) 
+```
+
+```{r, echo = FALSE}
+result %>% 
+  dplyr::mutate_at(dplyr::vars("clean.mv","dirty.mv","accrual.pay","accrual.receive","pv01"),
+                   formattable::comma) %>%
+  dplyr::mutate_at(dplyr::vars("par"), formattable::percent) %>%
+  knitr::kable(caption = "Pricing results", "html") %>%
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed","responsive"))
+```
+

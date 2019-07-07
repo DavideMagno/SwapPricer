@@ -64,7 +64,8 @@ SwapCashflowCalculation  <- function(today, start.date, maturity.date, type,
   }
 
   cashflows <-  fmdates::year_frac(today, cashflows, dcc)
-  cashflows <- tibble::tibble(yf = cashflows[cashflows >= 0])
+  cashflows <- tibble::tibble(yf = cashflows[cashflows >= 0]) %>%
+    dplyr::arrange(.data$yf)
 
   return(list(cashflows = cashflows, accrual.yf = accrual.yf,
               fixing.date = fixing.date))
@@ -256,6 +257,7 @@ SwapPortfolioPricing <- function(swap.portfolio, today, df.table) {
 
   cashflows <- swap.portfolio %>%
     purrr::map(~CashFlowPricing(today, .x, df.table))
+
   fixing.dates <- cashflows %>%
     purrr::map_depth(2, "fixing.date") %>%
     purrr::map(purrr::compact) %>%
