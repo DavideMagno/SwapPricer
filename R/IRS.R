@@ -82,7 +82,7 @@ SwapCashflowCalculation  <- function(today, start.date, maturity.date, type,
 #' @return A list containing the par swap rate and the annuity
 #'
 #' @export
-OLDParSwapRate <- function(swap.cf){
+OLDParSwapRateAlgorithm <- function(swap.cf){
 
   num <- (swap.cf$df[1] - swap.cf$df[dim(swap.cf)[1]])
   annuity <- (sum(diff(swap.cf$yf)*swap.cf$df[2:dim(swap.cf)[1]]))
@@ -116,7 +116,7 @@ OLDParSwapRateCalculation <- function(swap.dates, swap, df.table) {
     dplyr::mutate(df = stats::approx(df.table$t2m, log(df.table$df), .data$yf) %>%
                     purrr::pluck("y") %>%
                     exp) %>%
-    OLDParSwapRate
+    OLDParSwapRateAlgorithm
 }
 
 #' A function that calculates the accrual amounts for each leg
@@ -140,7 +140,7 @@ OLDParSwapRateCalculation <- function(swap.dates, swap, df.table) {
 #' @importFrom purrr pluck
 #'
 #' @export
-CalculateAccrual <- function(swap.dates, leg.type, swap, direction,
+AccrualCalculation <- function(swap.dates, leg.type, swap, direction,
                              floating.history) {
 
   if (!is.null(swap.dates$fixing.date)) {
@@ -181,7 +181,7 @@ CalculateAccrual <- function(swap.dates, leg.type, swap, direction,
 #' @importFrom purrr map
 #'
 #' @export
-SwapCalculations <- function(swap.dates, swap, df.table, floating.history) {
+SwapPricing <- function(swap.dates, swap, df.table, floating.history) {
 
   swap.par.pricing <- OLDParSwapRateCalculation(swap.dates, swap, df.table)
   direction <- switch(swap$type$pay, "fixed" = 1, "floating" = -1)
@@ -190,7 +190,7 @@ SwapCalculations <- function(swap.dates, swap, df.table, floating.history) {
     (swap.par.pricing$swap.rate - swap$strike) * direction
 
   accrual <- purrr::map2(swap.dates, names(swap$type),
-                         ~CalculateAccrual(.x, .y, swap, direction,
+                         ~AccrualCalculation(.x, .y, swap, direction,
                                            floating.history))
 
   pv01 <- swap$notional/10000 * swap.par.pricing$annuity * direction
@@ -268,7 +268,7 @@ SwapPortfolioPricing <- function(swap.portfolio, today, df.table) {
                     end_date = max(fixing.dates))
   purrr::pmap_df(list(x = cashflows, y = swap.portfolio,
                          z = rep(list(floating.history),length(cashflows))),
-                    ~SwapCalculations(..1, ..2, df.table, ..3)) %>%
+                    ~SwapPricing(..1, ..2, df.table, ..3)) %>%
     dplyr::mutate(swap.id = names(swap.portfolio)) %>%
     dplyr::select(.data$swap.id, dplyr::everything())
 }

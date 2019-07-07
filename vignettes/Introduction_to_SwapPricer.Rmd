@@ -2,7 +2,7 @@
 title: "Introduction to SwapPricer"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Define_data_structures}
+  %\VignetteIndexEntry{Introduction_to_SwapPricer}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -10,16 +10,16 @@ The `SwapPricer` package allows you to price a book of interest rate swaps (IRS)
 IRS is the most traded over the counter financial derivative in the world and now
 you can easily price it in R.  
 
-**Please note that as at version 0.1.0 the toolbox is not able to price:**
+Please note that as at version 0.1.0 the toolbox is not able to price:
 
-**1) Non EUR swaps**
+1) Non EUR swaps
 
-**2) EUR swaps that do not pay quarterly on the variable rate**
+2) EUR swaps that do not pay quarterly on the variable rate
 
-** Another important thing to note is that if you upload the csv file, the dates
+Another important thing to note is that if you upload the csv file, the dates
 must be in a dmy format. We are working on relaxing this constraint, but we 
 haven't found the most suitable toolbox to help us (yes, we also tried anytime
-and we were not fully impressed) **
+and we were not fully impressed)
 
 **We are working to solve all these issues in the next releases**
 
