@@ -1,11 +1,21 @@
 ---
-title: "Introduction to SwapPricer"
+title: "Intro to SwapPricer"
+author: "Davide Magno"
+date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Introduction_to_SwapPricer}
+  %\VignetteIndexEntry{Intro to SwapPricer}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
 The `SwapPricer` package allows you to price a book of interest rate swaps (IRS).
 IRS is the most traded over the counter financial derivative in the world and now
 you can easily price it in R.  
