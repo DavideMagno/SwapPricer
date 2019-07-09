@@ -1,10 +1,10 @@
 ---
-title: "Intro to SwapPricer"
+title: "Intro_to_SwapPricer"
 author: "Davide Magno"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Intro to SwapPricer}
+  %\VignetteIndexEntry{Intro_to_SwapPricer}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
