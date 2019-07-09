@@ -37,13 +37,7 @@ Please note that as at version 0.1.0 the toolbox is able to price:
 
 ## Installation
 
-<!-- You can install the released version of SwapPricer from [CRAN](https://CRAN.R-project.org) with: -->
-
-<!-- ``` r -->
-<!-- install.packages("SwapPricer") -->
-<!-- ``` -->
-
-You can for now just install the development version from [GitHub](https://github.com/) with:
+For now, you can just install the development version from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")

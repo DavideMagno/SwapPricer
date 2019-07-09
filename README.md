@@ -23,20 +23,11 @@ Please note that as at version 0.1.0 the toolbox is able to price:
 
 2)  Using a one-curve framework
 
-**We are working to introduce all these issues in the next
-releases**
+**We are working to introduce all these issues in the next releases**
 
 ## Installation
 
-<!-- You can install the released version of SwapPricer from [CRAN](https://CRAN.R-project.org) with: -->
-
-<!-- ``` r -->
-
-<!-- install.packages("SwapPricer") -->
-
-<!-- ``` -->
-
-You can for now just install the development version from
+For now, you can just install the development version from
 [GitHub](https://github.com/) with:
 
 ``` r
@@ -61,13 +52,13 @@ Examples of items 1 and 3 have been provided with the package.
 library(SwapPricer)
 SwapPortfolioPricing(SwapPricer::swap.basket, lubridate::ymd(20190414), SwapPricer::df.table)
 #> # A tibble: 5 x 7
-#>   swap.id  clean.mv  dirty.mv accrual.pay accrual.receive      par    pv01
-#>   <chr>       <dbl>     <dbl>       <dbl>           <dbl>    <dbl>   <dbl>
-#> 1 1        -881815.  -874994.       5441.           1379.  0.00771 -12394.
-#> 2 2         233692.   124000.     -97222.         -12470   0.0111   20867.
-#> 3 3         222083.   236147.       6702.           7361. -0.00138  -5724.
-#> 4 4         360095.   360095.          0               0   0.0118  -11163.
-#> 5 5       -2588829. -2867345.    -263836.         -14681.  0.0107   27914.
+#>   swap.id    clean.mv dirty.mv accrual.pay accrual.receive      par    pv01
+#>   <chr>         <dbl>    <dbl>       <dbl>           <dbl>    <dbl>   <dbl>
+#> 1 Swap 25y    -8.82e5  -8.75e5       5441.           1379.  0.00771 -12394.
+#> 2 Swap 30y     2.34e5   1.24e5     -97222.         -12470   0.0111   20867.
+#> 3 Swap 10y     2.22e5   2.36e5       6702.           7361. -0.00138  -5724.
+#> 4 Swap 2y16y   3.60e5   3.60e5          0               0   0.0118  -11163.
+#> 5 Swap non …  -2.59e6  -2.87e6    -263836.         -14681.  0.0107   27914.
 ```
 
 This function returns a table that can be easily used for reporting like
@@ -137,7 +128,7 @@ pv01
 
 <td style="text-align:left;">
 
-1
+Swap 25y
 
 </td>
 
@@ -183,7 +174,7 @@ pv01
 
 <td style="text-align:left;">
 
-2
+Swap 30y
 
 </td>
 
@@ -229,7 +220,7 @@ pv01
 
 <td style="text-align:left;">
 
-3
+Swap 10y
 
 </td>
 
@@ -275,7 +266,7 @@ pv01
 
 <td style="text-align:left;">
 
-4
+Swap 2y16y
 
 </td>
 
@@ -321,7 +312,7 @@ pv01
 
 <td style="text-align:left;">
 
-5
+Swap non standard
 
 </td>
 
