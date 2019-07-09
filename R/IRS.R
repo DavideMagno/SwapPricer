@@ -63,7 +63,7 @@ SwapCashflowCalculation  <- function(today, start.date, maturity.date, type,
     accrual.yf <- 0
   }
 
-  cashflows <-  fmdates::year_frac(today, cashflows, dcc)
+  cashflows <- fmdates::year_frac(today, cashflows, dcc)
   cashflows <- tibble::tibble(yf = cashflows[cashflows >= 0]) %>%
     dplyr::arrange(.data$yf)
 
