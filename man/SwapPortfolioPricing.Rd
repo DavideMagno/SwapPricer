@@ -4,7 +4,7 @@
 \alias{SwapPortfolioPricing}
 \title{Main function that manages the pricing of a portfolio of interest rate swap}
 \usage{
-SwapPortfolioPricing(swap.portfolio, today, df.table)
+SwapPortfolioPricing(swap.portfolio, today, ...)
 }
 \arguments{
 \item{swap.portfolio}{A portfolio of swap contracts. Please refer to the
@@ -13,9 +13,9 @@ create it}
 
 \item{today}{The Date at which the analysis is being carried out}
 
-\item{df.table}{A tibble with the discount factor curve information. Please
-refer to the vignette "Define the input data structures" for more details on
-how to create it}
+\item{...}{One curve sets (which are also lists which have to contain
+a currency and a discount curve as specified in the vignette intro) for each
+currency in the swap.portfolio.}
 }
 \value{
 A list with all the main pricing information for the contract

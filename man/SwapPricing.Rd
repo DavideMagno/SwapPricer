@@ -4,7 +4,7 @@
 \alias{SwapPricing}
 \title{A function that calculates the main characteristics of the contract}
 \usage{
-SwapPricing(swap.dates, swap, df.table, floating.history)
+SwapPricing(swap.dates, swap, floating.history, curves)
 }
 \arguments{
 \item{swap.dates}{A list of lists with the main cashflow information for
@@ -12,9 +12,10 @@ both the legs}
 
 \item{swap}{A list that contains the contract information}
 
-\item{df.table}{A tibble with the discount factor curve information}
-
 \item{floating.history}{A df with the historical data downloaded from Quandl}
+
+\item{curves}{A list of curve sets (which are also lists which have to contain
+a currency and a discount curve as specified in the vignette intro).}
 }
 \value{
 A list with all the main pricing information for the contract

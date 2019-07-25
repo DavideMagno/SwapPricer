@@ -1,15 +1,14 @@
 Package: SwapPricer
 Type: Package
 Title: Pricing of financial interest rate swaps in R
-Version: 0.1.0
+Version: 0.2.0
 Author: Davide Magno
 Maintainer: Davide Magno <davide.magno@curiousfrm.com>
 Description: This toolbox calculates the price and risk characteristics of 
     interest rate swaps, a widely used financial instrument. Please refer to the
     vignettes to understand how to setup the input data and run the main 
-    routines. For the current version of the toolbox, we recommend to price 
-    solely standard EUR swaps. In the next releases we will extend to the major
-    currencies with non standard coupon conventions and dual-curve construction. 
+    routines. The current version of the toolbox can price standard and non 
+    standard swaps denominated in CHF, EUR, GBP, JPY and USD.
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
@@ -23,7 +22,9 @@ Imports:
     tibble,
     magrittr,
     fmdates,
-    rlang (>= 0.1.2)
+    rlang (>= 0.1.2),
+    tidyr,
+    fredr
 Suggests: 
     knitr,
     rmarkdown,
