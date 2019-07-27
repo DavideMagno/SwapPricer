@@ -28,7 +28,7 @@
 #'
 #' @export
 CashflowCalculation  <- function(today, start.date, maturity.date, type,
-                                     time.unit, dcc, calendar) {
+                                     time.unit, dcc, calendar, currency) {
 
   s <- lubridate::year(start.date)
   m <- lubridate::year(maturity.date)
@@ -48,9 +48,11 @@ CashflowCalculation  <- function(today, start.date, maturity.date, type,
   if (!identical(as.double(accrual.date), double(0))) {
     accrual.date  %<>%  max()
     if (stringr::str_detect(type, "floating")) {
+      lag <- swap.standard.calendar[
+        grepl(currency,  swap.standard.calendar$currency),][["lag"]]
       fixing.date <- RQuantLib::advance(calendar = calendar,
                                         dates = accrual.date,
-                                        n = -2,
+                                        n = -lag,
                                         timeUnit = 0,
                                         bdc = 1,
                                         emr = TRUE)
@@ -222,7 +224,7 @@ SwapCashFlowCalculation <- function(today, swap) {
   purrr::pmap(list(x = swap$type, y = swap$time.unit, z = swap$dcc),
               ~CashflowCalculation(today, swap$start.date,
                                        swap$maturity.date, ..1, ..2, ..3,
-                                       swap$calendar))
+                                       swap$calendar, swap$currency))
 }
 
 
