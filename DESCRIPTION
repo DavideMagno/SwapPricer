@@ -36,4 +36,4 @@ Depends:
 VignetteBuilder: knitr
 URL: https://github.com/DavideMagno/SwapPricer
 BugReports: https://github.com/DavideMagno/SwapPricer/issues
-License: MIT + file LICENSE
+License: GPL-3
