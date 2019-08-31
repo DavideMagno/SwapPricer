@@ -18,13 +18,13 @@
 #' of the current accrual period 3) the fixing date for the variable rate
 #'
 #'
-#' @importFrom lubridate year as_date
+#' @importFrom lubridate year as_date %m+%
 #' @importFrom purrr map_dbl
-#' @importFrom RQuantLib advance
 #' @importFrom stringr str_detect
 #' @importFrom tibble tibble
 #' @importFrom dplyr filter
 #' @importFrom fmdates year_frac
+#' @importFrom bizdays modified.following adjust.previous
 #'
 #' @export
 SwapCashflowCalculation  <- function(today, start.date, maturity.date, type,
@@ -32,14 +32,10 @@ SwapCashflowCalculation  <- function(today, start.date, maturity.date, type,
 
   s <- lubridate::year(start.date)
   m <- lubridate::year(maturity.date)
-  cashflows <- ((seq_len((m - s) * (12/time.unit) + 1) - 1) * time.unit) %>%
-    purrr::map_dbl(~RQuantLib::advance(calendar = calendar,
-                                       dates = start.date,
-                                       n = .x,
-                                       timeUnit = 2,
-                                       bdc = 1,
-                                       emr = TRUE)) %>%
-    lubridate::as_date()
+
+  months.forward <- ((seq_len((m - s) * (12/time.unit) + 1) - 1) * time.unit)
+  cashflows <- (start.date %m+% months(months.forward)) %>%
+    bizdays::modified.following('QuantLib/TARGET')
 
   if (start.date < today) cashflows <- c(cashflows, today)
 
@@ -48,12 +44,14 @@ SwapCashflowCalculation  <- function(today, start.date, maturity.date, type,
   if (!identical(as.double(accrual.date), double(0))) {
     accrual.date  %<>%  max()
     if (stringr::str_detect(type, "floating")) {
-      fixing.date <- RQuantLib::advance(calendar = calendar,
-                                        dates = accrual.date,
-                                        n = -2,
-                                        timeUnit = 0,
-                                        bdc = 1,
-                                        emr = TRUE)
+      fixing.date <- (accrual.date - 2) %>%
+        bizdays::adjust.previous('QuantLib/TARGET')
+      # fixing.date <- RQuantLib::advance(calendar = calendar,
+      #                                   dates = accrual.date,
+      #                                   n = -2,
+      #                                   timeUnit = 0,
+      #                                   bdc = 1,
+      #                                   emr = TRUE)
     } else {
       fixing.date <- NULL
     }
@@ -243,6 +241,10 @@ CashFlowPricing <- function(today, swap, df.table) {
 #'
 #' @export
 SwapPortfolioPricing <- function(swap.portfolio, today, df.table) {
+
+  bizdays::load_quantlib_calendars('TARGET',
+                                   from = min(lubridate::dmy(swap.portfolio$start.date)),
+                                   to = max(lubridate::dmy(swap.portfolio$maturity.date)))
 
   if (tibble::is_tibble(swap.portfolio)) {
     swap.portfolio %<>%

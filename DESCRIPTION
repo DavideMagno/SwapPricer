@@ -15,7 +15,6 @@ LazyData: true
 RoxygenNote: 6.1.1
 Imports: 
     Quandl,
-    RQuantLib,
     dplyr,
     lubridate,
     purrr,
@@ -23,7 +22,8 @@ Imports:
     tibble,
     magrittr,
     fmdates,
-    rlang (>= 0.1.2)
+    rlang (>= 0.1.2),
+    bizdays
 Suggests: 
     knitr,
     rmarkdown,
