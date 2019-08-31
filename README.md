@@ -9,6 +9,8 @@
 Status:Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 [![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/SwapPricer)](https://CRAN.R-project.org/package=SwapPricer)
 
+[![Travis build
+status](https://travis-ci.org/DavideMagno/SwapPricer.svg?branch=master)](https://travis-ci.org/DavideMagno/SwapPricer)
 <!-- badges: end -->
 
 The goal of SwapPricer is to allow you to price a book of interest rate
@@ -51,14 +53,6 @@ Examples of items 1 and 3 have been provided with the package.
 ``` r
 library(SwapPricer)
 SwapPortfolioPricing(SwapPricer::swap.basket, lubridate::ymd(20190414), SwapPricer::df.table)
-#> # A tibble: 5 x 7
-#>   swap.id    clean.mv dirty.mv accrual.pay accrual.receive      par    pv01
-#>   <chr>         <dbl>    <dbl>       <dbl>           <dbl>    <dbl>   <dbl>
-#> 1 Swap 25y    -8.82e5  -8.75e5       5441.           1379.  0.00771 -12394.
-#> 2 Swap 30y     2.34e5   1.24e5     -97222.         -12470   0.0111   20867.
-#> 3 Swap 10y     2.22e5   2.36e5       6702.           7361. -0.00138  -5724.
-#> 4 Swap 2y16y   3.60e5   3.60e5          0               0   0.0118  -11163.
-#> 5 Swap non …  -2.59e6  -2.87e6    -263836.         -14681.  0.0107   27914.
 ```
 
 This function returns a table that can be easily used for reporting like

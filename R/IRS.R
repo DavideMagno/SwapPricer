@@ -109,7 +109,6 @@ OLDParSwapRateAlgorithm <- function(swap.cf){
 #' @importFrom purrr pluck
 #' @importFrom stats approx
 OLDParSwapRateCalculation <- function(swap.dates, swap, df.table) {
-
   switch(swap$type$pay,
          "fixed" = swap.dates$pay$cashflows,
          "floating" = swap.dates$receive$cashflows) %>%

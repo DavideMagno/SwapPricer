@@ -20,6 +20,7 @@ knitr::opts_chunk$set(
 [![Project Status:Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/SwapPricer)](https://CRAN.R-project.org/package=SwapPricer)
 
+[![Travis build status](https://travis-ci.org/DavideMagno/SwapPricer.svg?branch=master)](https://travis-ci.org/DavideMagno/SwapPricer)
 <!-- badges: end -->
 
 The goal of SwapPricer is to allow you to price a book of interest rate swaps (IRS).
@@ -56,14 +57,15 @@ inputs:
 
 Examples of items 1 and 3 have been provided with the package.
 
-```{r example}
+```{r example, eval = FALSE}
 library(SwapPricer)
 SwapPortfolioPricing(SwapPricer::swap.basket, lubridate::ymd(20190414), SwapPricer::df.table)
 ```
 
 This function returns a table that can be easily used for reporting like below
 
-```{r cars, echo = FALSE}
+```{r cars, message = FALSE, echo = FALSE}
+library(SwapPricer)
 SwapPricer::SwapPortfolioPricing(SwapPricer::swap.basket, lubridate::ymd(20190414), SwapPricer::df.table) %>% 
   dplyr::mutate_at(dplyr::vars("clean.mv","dirty.mv","accrual.pay","accrual.receive","pv01"),
                    formattable::comma) %>%
