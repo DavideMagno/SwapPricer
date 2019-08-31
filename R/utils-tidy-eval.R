@@ -3,7 +3,7 @@
 #' @md
 #' @name     tidyeval
 #' @keywords internal
-#' @importFrom rlang .data
-#' @aliases  .data
-#' @export   .data
+#' @importFrom rlang .data :=
+#' @aliases  .data :=
+#' @export   .data :=
 NULL

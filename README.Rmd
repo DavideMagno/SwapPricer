@@ -20,6 +20,7 @@ knitr::opts_chunk$set(
 [![Project Status:Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/SwapPricer)](https://CRAN.R-project.org/package=SwapPricer)
 
+[![Travis build status](https://travis-ci.org/DavideMagno/SwapPricer.svg?branch=master)](https://travis-ci.org/DavideMagno/SwapPricer)
 <!-- badges: end -->
 
 The goal of SwapPricer is to allow you to price a book of interest rate swaps (IRS).

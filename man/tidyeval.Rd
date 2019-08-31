@@ -3,6 +3,7 @@
 \name{tidyeval}
 \alias{tidyeval}
 \alias{.data}
+\alias{:=}
 \title{Tidy eval helper}
 \description{
 Tidy eval helper

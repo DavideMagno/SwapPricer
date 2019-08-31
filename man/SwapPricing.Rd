@@ -4,13 +4,15 @@
 \alias{SwapPricing}
 \title{A function that calculates the main characteristics of the contract}
 \usage{
-SwapPricing(swap.dates, swap, floating.history, curves)
+SwapPricing(swap.dates, swap, today, floating.history, curves)
 }
 \arguments{
 \item{swap.dates}{A list of lists with the main cashflow information for
 both the legs}
 
 \item{swap}{A list that contains the contract information}
+
+\item{today}{The Date at which the analysis is being carried out}
 
 \item{floating.history}{A df with the historical data downloaded from Quandl}
 

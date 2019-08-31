@@ -105,3 +105,34 @@ GetStandardList <- function(swap.tabular, variable, test, swap.standard) {
     }
   return(convention)
 }
+
+
+#' @importFrom purrr flatten
+ExtractFromList <- function(swap.portfolio, item) {
+  swap.portfolio %>%
+    purrr::map(purrr::pluck(item)) %>%
+    flatten %>%
+    purrr::reduce(c)
+}
+
+CalculateCurvesDCC <- function(curves, swap.portfolio, today){
+
+  dcc.tibble <- tibble::tibble(
+    currency = rep(ExtractFromList(swap.portfolio, "currency"), each = 2),
+    type = ExtractFromList(swap.portfolio, "type"),
+    dcc = ExtractFromList(swap.portfolio, "dcc")
+  ) %>%
+    dplyr::filter(grepl("fixed", .data$type)) %>%
+    dplyr::distinct()
+
+  for (row in purrr::transpose(dcc.tibble)) {
+    curves[[row$currency]]$discount %<>%
+      dplyr::mutate(!!row$dcc := fmdates::year_frac(today, .data$Date, row$dcc))
+  }
+
+  discount.curves <- map(curves, ~.x$discount %>%
+                           select(-Date) %>%
+                           {rbind(c(1,rep(0, ncol(.x$discount) - 1)),.)})
+
+  list(discount = discount.curves)
+}

@@ -9,6 +9,8 @@
 Status:Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 [![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/SwapPricer)](https://CRAN.R-project.org/package=SwapPricer)
 
+[![Travis build
+status](https://travis-ci.org/DavideMagno/SwapPricer.svg?branch=master)](https://travis-ci.org/DavideMagno/SwapPricer)
 <!-- badges: end -->
 
 The goal of SwapPricer is to allow you to price a book of interest rate
@@ -50,21 +52,24 @@ Examples of items 1 and 3 have been provided with the package.
 ``` r
 today <- lubridate::ymd(20190414)
 library(SwapPricer)
+#> Registered S3 method overwritten by 'xts':
+#>   method     from
+#>   as.zoo.xts zoo
 SwapPricer::SwapPortfolioPricing(SwapPricer::swap.basket, today, 
                                  SwapPricer::EUR.curves, SwapPricer::GBP.curves,
                                  SwapPricer::USD.curves) 
 #> # A tibble: 9 x 8
-#>   swap.id currency clean.mv dirty.mv accrual.pay accrual.receive      par
-#>   <chr>   <chr>       <dbl>    <dbl>       <dbl>           <dbl>    <dbl>
-#> 1 Swap 2… EUR       -8.82e5  -8.75e5       5441.           1379.  7.71e-3
-#> 2 Swap 3… GBP        2.28e5   2.24e5     -47123.          42820.  1.11e-2
-#> 3 Swap 1… USD        2.22e5   1.53e5     -76303.           7361. -1.38e-3
-#> 4 Swap 2… GBP        3.65e5   3.65e5          0               0   1.17e-2
-#> 5 Swap n… EUR       -2.59e6  -2.86e6    -263836.          -5988.  1.07e-2
-#> 6 Swap 1… EUR       -1.60e4  -2.96e4      -3808.          -9787.  6.88e-4
-#> 7 Swap 3… GBP        1.85e6   2.03e6     -20550.         194521.  1.11e-2
-#> 8 Swap 1… USD        2.22e5   1.52e5     -77950.           7123. -1.38e-3
-#> 9 Swap 2… EUR       -3.60e5  -3.60e5          0               0   1.18e-2
+#>   swap.id currency clean.mv dirty.mv accrual.pay accrual.receive     par
+#>   <chr>   <chr>       <dbl>    <dbl>       <dbl>           <dbl>   <dbl>
+#> 1 Swap 2… EUR       -8.82e5  -8.75e5       5441.           1379. 7.71e-3
+#> 2 Swap 3… GBP        1.05e5   1.05e5      -4712.           4280. 1.54e-2
+#> 3 Swap 1… USD       -1.19e5  -1.26e5      -7630.            736. 2.43e-2
+#> 4 Swap 2… GBP       -9.46e4  -9.46e4          0               0  1.59e-2
+#> 5 Swap n… EUR       -2.59e6  -2.86e6    -263836.          -5988. 1.07e-2
+#> 6 Swap 1… EUR       -1.63e4  -2.99e4      -3808.          -9787. 6.82e-4
+#> 7 Swap 3… GBP        8.84e4   1.06e5      -2057.          19452. 1.54e-2
+#> 8 Swap 1… USD       -1.19e5  -1.27e5      -7795.            712. 2.44e-2
+#> 9 Swap 2… EUR       -3.61e5  -3.61e5          0               0  1.18e-2
 #> # … with 1 more variable: pv01 <dbl>
 ```
 
@@ -205,37 +210,37 @@ GBP
 
 <td style="text-align:right;">
 
-228,431.26
+104,984.18
 
 </td>
 
 <td style="text-align:right;">
 
-224,128.43
+104,552.11
 
 </td>
 
 <td style="text-align:right;">
 
-\-47,123.29
+\-4,712.33
 
 </td>
 
 <td style="text-align:right;">
 
-42,820.46
+4,280.26
 
 </td>
 
 <td style="text-align:right;">
 
-1.11%
+1.54%
 
 </td>
 
 <td style="text-align:right;">
 
-20,937.20
+1,948.79
 
 </td>
 
@@ -257,37 +262,37 @@ USD
 
 <td style="text-align:right;">
 
-222,182.33
+\-119,319.23
 
 </td>
 
 <td style="text-align:right;">
 
-153,240.66
+\-126,213.40
 
 </td>
 
 <td style="text-align:right;">
 
-\-76,302.78
+\-7,630.28
 
 </td>
 
 <td style="text-align:right;">
 
-7,361.11
+736.11
 
 </td>
 
 <td style="text-align:right;">
 
-\-0.14%
+2.43%
 
 </td>
 
 <td style="text-align:right;">
 
-\-5,728.51
+\-548.15
 
 </td>
 
@@ -309,13 +314,13 @@ GBP
 
 <td style="text-align:right;">
 
-364,537.92
+\-94,592.58
 
 </td>
 
 <td style="text-align:right;">
 
-364,537.92
+\-94,592.58
 
 </td>
 
@@ -333,13 +338,13 @@ GBP
 
 <td style="text-align:right;">
 
-1.17%
+1.59%
 
 </td>
 
 <td style="text-align:right;">
 
-\-11,202.52
+\-10,394.43
 
 </td>
 
@@ -361,13 +366,13 @@ EUR
 
 <td style="text-align:right;">
 
-\-2,588,828.67
+\-2,591,763.24
 
 </td>
 
 <td style="text-align:right;">
 
-\-2,858,651.96
+\-2,861,586.52
 
 </td>
 
@@ -391,7 +396,7 @@ EUR
 
 <td style="text-align:right;">
 
-27,914.07
+27,917.04
 
 </td>
 
@@ -413,13 +418,13 @@ EUR
 
 <td style="text-align:right;">
 
-\-15,988.79
+\-16,340.53
 
 </td>
 
 <td style="text-align:right;">
 
-\-29,584.13
+\-29,935.87
 
 </td>
 
@@ -443,7 +448,7 @@ EUR
 
 <td style="text-align:right;">
 
-5,132.39
+5,132.42
 
 </td>
 
@@ -465,37 +470,37 @@ GBP
 
 <td style="text-align:right;">
 
-1,853,676.17
+88,396.87
 
 </td>
 
 <td style="text-align:right;">
 
-2,027,646.72
+105,791.96
 
 </td>
 
 <td style="text-align:right;">
 
-\-20,550.00
+\-2,056.96
 
 </td>
 
 <td style="text-align:right;">
 
-194,520.55
+19,452.05
 
 </td>
 
 <td style="text-align:right;">
 
-1.11%
+1.54%
 
 </td>
 
 <td style="text-align:right;">
 
-\-20,879.14
+\-1,941.30
 
 </td>
 
@@ -517,37 +522,37 @@ USD
 
 <td style="text-align:right;">
 
-222,451.38
+\-119,490.54
 
 </td>
 
 <td style="text-align:right;">
 
-151,624.53
+\-126,573.22
 
 </td>
 
 <td style="text-align:right;">
 
-\-77,950.14
+\-7,795.01
 
 </td>
 
 <td style="text-align:right;">
 
-7,123.29
+712.33
 
 </td>
 
 <td style="text-align:right;">
 
-\-0.14%
+2.44%
 
 </td>
 
 <td style="text-align:right;">
 
-\-5,739.49
+\-545.96
 
 </td>
 
@@ -569,13 +574,13 @@ EUR
 
 <td style="text-align:right;">
 
-\-359,616.46
+\-361,098.10
 
 </td>
 
 <td style="text-align:right;">
 
-\-359,616.46
+\-361,098.10
 
 </td>
 
@@ -599,7 +604,7 @@ EUR
 
 <td style="text-align:right;">
 
-11,169.71
+11,170.90
 
 </td>
 

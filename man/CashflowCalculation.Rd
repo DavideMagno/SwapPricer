@@ -6,7 +6,7 @@
 contract}
 \usage{
 CashflowCalculation(today, start.date, maturity.date, type, time.unit, dcc,
-  calendar)
+  calendar, currency)
 }
 \arguments{
 \item{today}{The Date at which the analysis is being carried out}
@@ -23,6 +23,8 @@ would have a time.unit of 1, quarterly of 3, semiannual of 6 and annual of 12)}
 \item{dcc}{Day Count Convention as per the RQuantLib doc}
 
 \item{calendar}{Character with the holiday's calendar as per the RQuantLib doc}
+
+\item{currency}{The ISO code of the swap's currency}
 }
 \value{
 A list which contains 1) future cashflows 2) starting date
