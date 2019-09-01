@@ -5,9 +5,7 @@ cache: packages
 
 before_install:
   - sudo apt-get install libboost-all-dev
-  - sudo apt-get install wget
-  - wget https://bintray.com/quantlib/releases/download_file?file_path=QuantLib-1.16.tar.gz
-  - tar -czvf QuantLib-1.16.tar.gz
+  - wget -c https://bintray.com/quantlib/releases/download_file?file_path=QuantLib-1.16.tar.gz -O - | tar -xz
   - cd QuantLib-1.16
   - ./configure --with-boost-include=/home/foo/include --with-boost-lib=/home/foo/lib
   - make
