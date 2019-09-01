@@ -4,7 +4,7 @@ language: R
 cache: packages
 
 before_install:
-  - docker pull lballabio/quantlib-devenv
+  - docker pull lballabio/quantlib-devenv:1.66.0-xenial
 
 after_script:
   - ./travis-tool.sh dump_logs_by_extension "timings"
