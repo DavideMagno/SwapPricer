@@ -3,6 +3,16 @@
 language: R
 cache: packages
 
+before_install:
+  - sudo apt-get install libboost-all-dev
+  - sudo apt-get install wget
+  - wget https://bintray.com/quantlib/releases/download_file?file_path=QuantLib-1.16.tar.gz
+  - tar xzf QuantLib-1.16.tar.gz
+  - cd QuantLib-1.16
+  - ./configure --with-boost-include=/home/foo/include --with-boost-lib=/home/foo/lib
+  - make
+  - sudo make install
+
 after_script:
   - ./travis-tool.sh dump_logs_by_extension "timings"
   - ./travis-tool.sh dump_sysinfo
