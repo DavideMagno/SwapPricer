@@ -116,7 +116,6 @@ ExtractFromList <- function(swap.portfolio, item) {
 }
 
 CalculateCurvesDCC <- function(curves, swap.portfolio, today){
-
   dcc.tibble <- tibble::tibble(
     currency = rep(ExtractFromList(swap.portfolio, "currency"), each = 2),
     type = ExtractFromList(swap.portfolio, "type"),

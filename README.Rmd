@@ -48,17 +48,28 @@ devtools::install_github("DavideMagno/SwapPricer")
 The main function of the toolbox is `SwapPortfolioPricing` which uses just three
 inputs:
 
-1) A table with the characteristics of the swap
+1) A table with the characteristics of the swap, like the following one
+
+```{r, echo = FALSE}
+knitr::kable(SwapPricer::swap.basket, caption = "Input Portfolio", "html")
+```
 
 2) The date at which the swaps are being priced
 
-3) A table with the discounting factor curve
+3) As many interest rate lists as per the currencies in the swap portfolio.
+The list is made of a string with the code of the currency and a with a tibble
+with the discounting factor curve with two columns: Dates and Discount Factors (df). 
+Here is an example of interest rate list:
+
+```{r}
+SwapPricer::EUR.curves
+```
 
 Examples of items 1 and 3 have been provided with the package.
 
 ```{r example}
-today <- lubridate::ymd(20190414)
 library(SwapPricer)
+today <- lubridate::ymd(20190415)
 SwapPricer::SwapPortfolioPricing(SwapPricer::swap.basket, today, 
                                  SwapPricer::EUR.curves, SwapPricer::GBP.curves,
                                  SwapPricer::USD.curves) 

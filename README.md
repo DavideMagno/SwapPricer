@@ -41,40 +41,962 @@ devtools::install_github("DavideMagno/SwapPricer")
 The main function of the toolbox is `SwapPortfolioPricing` which uses
 just three inputs:
 
-1)  A table with the characteristics of the swap
+1)  A table with the characteristics of the swap, like the following one
+
+<!-- end list -->
+
+    #> Registered S3 method overwritten by 'xts':
+    #>   method     from
+    #>   as.zoo.xts zoo
+
+<table>
+
+<caption>
+
+Input Portfolio
+
+</caption>
+
+<thead>
+
+<tr>
+
+<th style="text-align:left;">
+
+ID
+
+</th>
+
+<th style="text-align:left;">
+
+currency
+
+</th>
+
+<th style="text-align:right;">
+
+notional
+
+</th>
+
+<th style="text-align:left;">
+
+start.date
+
+</th>
+
+<th style="text-align:left;">
+
+maturity.date
+
+</th>
+
+<th style="text-align:right;">
+
+strike
+
+</th>
+
+<th style="text-align:left;">
+
+type
+
+</th>
+
+<th style="text-align:left;">
+
+standard
+
+</th>
+
+<th style="text-align:right;">
+
+time.unit.pay
+
+</th>
+
+<th style="text-align:right;">
+
+time.unit.receive
+
+</th>
+
+<th style="text-align:left;">
+
+dcc.pay
+
+</th>
+
+<th style="text-align:left;">
+
+dcc.receive
+
+</th>
+
+<th style="text-align:left;">
+
+calendar
+
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td style="text-align:left;">
+
+Swap 25y
+
+</td>
+
+<td style="text-align:left;">
+
+EUR
+
+</td>
+
+<td style="text-align:right;">
+
+1.0e+07
+
+</td>
+
+<td style="text-align:left;">
+
+19/01/2007
+
+</td>
+
+<td style="text-align:left;">
+
+19/01/2032
+
+</td>
+
+<td style="text-align:right;">
+
+0.0005982
+
+</td>
+
+<td style="text-align:left;">
+
+receiver
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+<td style="text-align:right;">
+
+NA
+
+</td>
+
+<td style="text-align:right;">
+
+NA
+
+</td>
+
+<td style="text-align:left;">
+
+NA
+
+</td>
+
+<td style="text-align:left;">
+
+NA
+
+</td>
+
+<td style="text-align:left;">
+
+NA
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Swap 30y
+
+</td>
+
+<td style="text-align:left;">
+
+GBP
+
+</td>
+
+<td style="text-align:right;">
+
+1.0e+06
+
+</td>
+
+<td style="text-align:left;">
+
+24/04/2012
+
+</td>
+
+<td style="text-align:left;">
+
+24/04/2042
+
+</td>
+
+<td style="text-align:right;">
+
+0.0100000
+
+</td>
+
+<td style="text-align:left;">
+
+payer
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+<td style="text-align:right;">
+
+NA
+
+</td>
+
+<td style="text-align:right;">
+
+NA
+
+</td>
+
+<td style="text-align:left;">
+
+NA
+
+</td>
+
+<td style="text-align:left;">
+
+NA
+
+</td>
+
+<td style="text-align:left;">
+
+NA
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Swap 10y
+
+</td>
+
+<td style="text-align:left;">
+
+USD
+
+</td>
+
+<td style="text-align:right;">
+
+2.0e+06
+
+</td>
+
+<td style="text-align:left;">
+
+21/02/2012
+
+</td>
+
+<td style="text-align:left;">
+
+21/02/2022
+
+</td>
+
+<td style="text-align:right;">
+
+0.0025000
+
+</td>
+
+<td style="text-align:left;">
+
+receiver
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+<td style="text-align:right;">
+
+NA
+
+</td>
+
+<td style="text-align:right;">
+
+NA
+
+</td>
+
+<td style="text-align:left;">
+
+NA
+
+</td>
+
+<td style="text-align:left;">
+
+NA
+
+</td>
+
+<td style="text-align:left;">
+
+NA
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Swap 2y16y
+
+</td>
+
+<td style="text-align:left;">
+
+GBP
+
+</td>
+
+<td style="text-align:right;">
+
+7.5e+06
+
+</td>
+
+<td style="text-align:left;">
+
+14/04/2021
+
+</td>
+
+<td style="text-align:left;">
+
+14/04/2037
+
+</td>
+
+<td style="text-align:right;">
+
+0.0150000
+
+</td>
+
+<td style="text-align:left;">
+
+receiver
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+<td style="text-align:right;">
+
+NA
+
+</td>
+
+<td style="text-align:right;">
+
+NA
+
+</td>
+
+<td style="text-align:left;">
+
+NA
+
+</td>
+
+<td style="text-align:left;">
+
+NA
+
+</td>
+
+<td style="text-align:left;">
+
+NA
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Swap non standard
+
+</td>
+
+<td style="text-align:left;">
+
+EUR
+
+</td>
+
+<td style="text-align:right;">
+
+1.5e+07
+
+</td>
+
+<td style="text-align:left;">
+
+26/05/2014
+
+</td>
+
+<td style="text-align:left;">
+
+26/05/2039
+
+</td>
+
+<td style="text-align:right;">
+
+0.0200000
+
+</td>
+
+<td style="text-align:left;">
+
+payer
+
+</td>
+
+<td style="text-align:left;">
+
+FALSE
+
+</td>
+
+<td style="text-align:right;">
+
+12
+
+</td>
+
+<td style="text-align:right;">
+
+3
+
+</td>
+
+<td style="text-align:left;">
+
+act/365
+
+</td>
+
+<td style="text-align:left;">
+
+act/365
+
+</td>
+
+<td style="text-align:left;">
+
+TARGET
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Swap 10y semi fixed
+
+</td>
+
+<td style="text-align:left;">
+
+EUR
+
+</td>
+
+<td style="text-align:right;">
+
+1.0e+07
+
+</td>
+
+<td style="text-align:left;">
+
+26/05/2014
+
+</td>
+
+<td style="text-align:left;">
+
+26/05/2024
+
+</td>
+
+<td style="text-align:right;">
+
+0.0010000
+
+</td>
+
+<td style="text-align:left;">
+
+payer
+
+</td>
+
+<td style="text-align:left;">
+
+FALSE
+
+</td>
+
+<td style="text-align:right;">
+
+6
+
+</td>
+
+<td style="text-align:right;">
+
+6
+
+</td>
+
+<td style="text-align:left;">
+
+act/365
+
+</td>
+
+<td style="text-align:left;">
+
+act/365
+
+</td>
+
+<td style="text-align:left;">
+
+TARGET
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Swap 30y quarter floating
+
+</td>
+
+<td style="text-align:left;">
+
+GBP
+
+</td>
+
+<td style="text-align:right;">
+
+1.0e+06
+
+</td>
+
+<td style="text-align:left;">
+
+24/04/2012
+
+</td>
+
+<td style="text-align:left;">
+
+24/04/2042
+
+</td>
+
+<td style="text-align:right;">
+
+0.0200000
+
+</td>
+
+<td style="text-align:left;">
+
+receiver
+
+</td>
+
+<td style="text-align:left;">
+
+FALSE
+
+</td>
+
+<td style="text-align:right;">
+
+3
+
+</td>
+
+<td style="text-align:right;">
+
+12
+
+</td>
+
+<td style="text-align:left;">
+
+act/360
+
+</td>
+
+<td style="text-align:left;">
+
+act/365
+
+</td>
+
+<td style="text-align:left;">
+
+UnitedKingdom
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Swap 10y irregular
+
+</td>
+
+<td style="text-align:left;">
+
+USD
+
+</td>
+
+<td style="text-align:right;">
+
+2.0e+06
+
+</td>
+
+<td style="text-align:left;">
+
+21/02/2012
+
+</td>
+
+<td style="text-align:left;">
+
+21/02/2022
+
+</td>
+
+<td style="text-align:right;">
+
+0.0025000
+
+</td>
+
+<td style="text-align:left;">
+
+receiver
+
+</td>
+
+<td style="text-align:left;">
+
+FALSE
+
+</td>
+
+<td style="text-align:right;">
+
+6
+
+</td>
+
+<td style="text-align:right;">
+
+12
+
+</td>
+
+<td style="text-align:left;">
+
+act/365
+
+</td>
+
+<td style="text-align:left;">
+
+act/365
+
+</td>
+
+<td style="text-align:left;">
+
+TARGET
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Swap 2y16y
+
+</td>
+
+<td style="text-align:left;">
+
+EUR
+
+</td>
+
+<td style="text-align:right;">
+
+7.5e+06
+
+</td>
+
+<td style="text-align:left;">
+
+14/04/2021
+
+</td>
+
+<td style="text-align:left;">
+
+14/04/2037
+
+</td>
+
+<td style="text-align:right;">
+
+0.0150000
+
+</td>
+
+<td style="text-align:left;">
+
+payer
+
+</td>
+
+<td style="text-align:left;">
+
+FALSE
+
+</td>
+
+<td style="text-align:right;">
+
+12
+
+</td>
+
+<td style="text-align:right;">
+
+12
+
+</td>
+
+<td style="text-align:left;">
+
+act/365
+
+</td>
+
+<td style="text-align:left;">
+
+act/360
+
+</td>
+
+<td style="text-align:left;">
+
+TARGET
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
 
 2)  The date at which the swaps are being priced
 
-3)  A table with the discounting factor curve
+3)  As many interest rate lists as per the currencies in the swap
+    portfolio. The list is made of a string with the code of the
+    currency and a with a tibble with the discounting factor curve with
+    two columns: Dates and Discount Factors (df). Here is an example of
+    interest rate list:
+
+<!-- end list -->
+
+``` r
+SwapPricer::EUR.curves
+#> $currency
+#> [1] "EUR"
+#> 
+#> $discount
+#> # A tibble: 26 x 2
+#>    Date          df
+#>    <date>     <dbl>
+#>  1 2019-04-15  1   
+#>  2 2019-04-23  1.00
+#>  3 2019-05-16  1.00
+#>  4 2019-07-16  1.00
+#>  5 2019-10-16  1.00
+#>  6 2020-04-16  1.00
+#>  7 2020-10-16  1.00
+#>  8 2021-04-16  1.00
+#>  9 2022-04-19  1.00
+#> 10 2023-04-17  1.00
+#> # … with 16 more rows
+```
 
 Examples of items 1 and 3 have been provided with the package.
 
 ``` r
-today <- lubridate::ymd(20190414)
 library(SwapPricer)
-#> Registered S3 method overwritten by 'xts':
-#>   method     from
-#>   as.zoo.xts zoo
+today <- lubridate::ymd(20190415)
 SwapPricer::SwapPortfolioPricing(SwapPricer::swap.basket, today, 
                                  SwapPricer::EUR.curves, SwapPricer::GBP.curves,
                                  SwapPricer::USD.curves) 
+#> Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+#> unique 'x' values
+
+#> Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+#> unique 'x' values
+
+#> Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+#> unique 'x' values
+
+#> Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+#> unique 'x' values
+
+#> Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+#> unique 'x' values
+
+#> Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+#> unique 'x' values
+
+#> Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+#> unique 'x' values
+
+#> Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+#> unique 'x' values
+
+#> Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+#> unique 'x' values
 #> # A tibble: 9 x 8
 #>   swap.id currency clean.mv dirty.mv accrual.pay accrual.receive     par
 #>   <chr>   <chr>       <dbl>    <dbl>       <dbl>           <dbl>   <dbl>
-#> 1 Swap 2… EUR       -8.82e5  -8.75e5       5441.           1379. 7.71e-3
-#> 2 Swap 3… GBP        1.05e5   1.05e5      -4712.           4280. 1.54e-2
-#> 3 Swap 1… USD       -1.19e5  -1.26e5      -7630.            736. 2.43e-2
-#> 4 Swap 2… GBP       -9.46e4  -9.46e4          0               0  1.59e-2
-#> 5 Swap n… EUR       -2.59e6  -2.86e6    -263836.          -5988. 1.07e-2
-#> 6 Swap 1… EUR       -1.63e4  -2.99e4      -3808.          -9787. 6.82e-4
-#> 7 Swap 3… GBP        8.84e4   1.06e5      -2057.          19452. 1.54e-2
-#> 8 Swap 1… USD       -1.19e5  -1.27e5      -7795.            712. 2.44e-2
+#> 1 Swap 2… EUR       -8.82e5  -8.75e5       5483.           1396. 7.71e-3
+#> 2 Swap 3… GBP        1.05e5   1.05e5      -4740.           4305. 1.54e-2
+#> 3 Swap 1… USD       -1.19e5  -1.26e5      -7777.            750  2.43e-2
+#> 4 Swap 2… GBP       -9.49e4  -9.49e4          0               0  1.59e-2
+#> 5 Swap n… EUR       -2.59e6  -2.86e6    -264658.          -6115. 1.07e-2
+#> 6 Swap 1… EUR       -1.63e4  -3.00e4      -3836.          -9858. 6.82e-4
+#> 7 Swap 3… GBP        8.82e4   1.06e5      -2083.          19507. 1.55e-2
+#> 8 Swap 1… USD       -1.20e5  -1.27e5      -7945.            726. 2.44e-2
 #> 9 Swap 2… EUR       -3.61e5  -3.61e5          0               0  1.18e-2
 #> # … with 1 more variable: pv01 <dbl>
 ```
 
 This function returns a table that can be easily used for reporting like
 below
+
+    #> Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    #> unique 'x' values
+    
+    #> Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    #> unique 'x' values
+    
+    #> Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    #> unique 'x' values
+    
+    #> Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    #> unique 'x' values
+    
+    #> Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    #> unique 'x' values
+    
+    #> Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    #> unique 'x' values
+    
+    #> Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    #> unique 'x' values
+    
+    #> Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    #> unique 'x' values
+    
+    #> Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    #> unique 'x' values
 
 <table class="table table-striped table-hover table-condensed table-responsive" style="margin-left: auto; margin-right: auto;">
 
@@ -158,25 +1080,25 @@ EUR
 
 <td style="text-align:right;">
 
-\-881,814.61
+\-881,831.25
 
 </td>
 
 <td style="text-align:right;">
 
-\-874,994.32
+\-874,952.12
 
 </td>
 
 <td style="text-align:right;">
 
-5,441.11
+5,483.33
 
 </td>
 
 <td style="text-align:right;">
 
-1,379.18
+1,395.80
 
 </td>
 
@@ -188,7 +1110,7 @@ EUR
 
 <td style="text-align:right;">
 
-\-12,393.65
+\-12,390.87
 
 </td>
 
@@ -210,25 +1132,25 @@ GBP
 
 <td style="text-align:right;">
 
-104,984.18
+105,100.25
 
 </td>
 
 <td style="text-align:right;">
 
-104,552.11
+104,665.66
 
 </td>
 
 <td style="text-align:right;">
 
-\-4,712.33
+\-4,739.73
 
 </td>
 
 <td style="text-align:right;">
 
-4,280.26
+4,305.14
 
 </td>
 
@@ -240,7 +1162,7 @@ GBP
 
 <td style="text-align:right;">
 
-1,948.79
+1,948.27
 
 </td>
 
@@ -262,25 +1184,25 @@ USD
 
 <td style="text-align:right;">
 
-\-119,319.23
+\-119,333.64
 
 </td>
 
 <td style="text-align:right;">
 
-\-126,213.40
+\-126,360.65
 
 </td>
 
 <td style="text-align:right;">
 
-\-7,630.28
+\-7,777.01
 
 </td>
 
 <td style="text-align:right;">
 
-736.11
+750.00
 
 </td>
 
@@ -292,7 +1214,7 @@ USD
 
 <td style="text-align:right;">
 
-\-548.15
+\-547.60
 
 </td>
 
@@ -314,13 +1236,13 @@ GBP
 
 <td style="text-align:right;">
 
-\-94,592.58
+\-94,850.43
 
 </td>
 
 <td style="text-align:right;">
 
-\-94,592.58
+\-94,850.43
 
 </td>
 
@@ -344,7 +1266,7 @@ GBP
 
 <td style="text-align:right;">
 
-\-10,394.43
+\-10,393.05
 
 </td>
 
@@ -366,25 +1288,25 @@ EUR
 
 <td style="text-align:right;">
 
-\-2,591,763.24
+\-2,590,941.00
 
 </td>
 
 <td style="text-align:right;">
 
-\-2,861,586.52
+\-2,861,713.60
 
 </td>
 
 <td style="text-align:right;">
 
-\-263,835.62
+\-264,657.53
 
 </td>
 
 <td style="text-align:right;">
 
-\-5,987.67
+\-6,115.07
 
 </td>
 
@@ -396,7 +1318,7 @@ EUR
 
 <td style="text-align:right;">
 
-27,917.04
+27,912.93
 
 </td>
 
@@ -418,25 +1340,25 @@ EUR
 
 <td style="text-align:right;">
 
-\-16,340.53
+\-16,313.13
 
 </td>
 
 <td style="text-align:right;">
 
-\-29,935.87
+\-30,006.28
 
 </td>
 
 <td style="text-align:right;">
 
-\-3,808.22
+\-3,835.62
 
 </td>
 
 <td style="text-align:right;">
 
-\-9,787.12
+\-9,857.53
 
 </td>
 
@@ -448,7 +1370,7 @@ EUR
 
 <td style="text-align:right;">
 
-5,132.42
+5,129.68
 
 </td>
 
@@ -470,37 +1392,37 @@ GBP
 
 <td style="text-align:right;">
 
-88,396.87
+88,228.04
 
 </td>
 
 <td style="text-align:right;">
 
-105,791.96
+105,652.23
 
 </td>
 
 <td style="text-align:right;">
 
-\-2,056.96
+\-2,082.67
 
 </td>
 
 <td style="text-align:right;">
 
-19,452.05
+19,506.85
 
 </td>
 
 <td style="text-align:right;">
 
-1.54%
+1.55%
 
 </td>
 
 <td style="text-align:right;">
 
-\-1,941.30
+\-1,940.77
 
 </td>
 
@@ -522,25 +1444,25 @@ USD
 
 <td style="text-align:right;">
 
-\-119,490.54
+\-119,608.54
 
 </td>
 
 <td style="text-align:right;">
 
-\-126,573.22
+\-126,827.43
 
 </td>
 
 <td style="text-align:right;">
 
-\-7,795.01
+\-7,944.92
 
 </td>
 
 <td style="text-align:right;">
 
-712.33
+726.03
 
 </td>
 
@@ -552,7 +1474,7 @@ USD
 
 <td style="text-align:right;">
 
-\-545.96
+\-545.92
 
 </td>
 

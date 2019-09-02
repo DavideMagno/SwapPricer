@@ -1,3 +1,34 @@
+AdvanceDate <- function(dates, currency, eom.check) {
+  holiday <- holidays[[currency]]
+  check <- TRUE %in% ((dates %in% holiday) |
+                        (weekdays(dates) %in% "Saturday") |
+                        (weekdays(dates) %in% "Sunday"))
+  if (check) {
+    repeat {
+      if (eom.check) {
+        dates <- dplyr::case_when((dates %in% holiday) ~ dates - 1,
+                                      (weekdays(dates) %in% "Saturday") ~ dates - 1,
+                                      (weekdays(dates) %in% "Sunday") ~ dates - 2,
+                                      TRUE ~ dates)
+      } else {
+        dates <- dplyr::case_when((dates %in% holiday) ~ dates + 1,
+                                      (weekdays(dates) %in% "Saturday") ~ dates + 2,
+                                      (weekdays(dates) %in% "Sunday") ~ dates + 1,
+                                      TRUE ~ dates)
+      }
+      check <- TRUE %in% ((dates %in% holiday) |
+                            (weekdays(dates) %in% "Saturday") |
+                            (weekdays(dates) %in% "Sunday"))
+      if (!check) {
+        return(dates)
+      }
+    }
+  } else {
+    return(dates)
+  }
+}
+
+
 #' A function that calculates the main set of dates for a given leg of the
 #' contract
 #'
@@ -19,27 +50,21 @@
 #' of the current accrual period 3) the fixing date for the variable rate
 #'
 #'
-#' @importFrom lubridate year as_date
+#' @importFrom lubridate year as_date %m+% days
 #' @importFrom purrr map_dbl
-#' @importFrom RQuantLib advance
 #' @importFrom stringr str_detect
 #' @importFrom tibble tibble
 #' @importFrom dplyr filter
-#' @importFrom fmdates year_frac
 #'
 #' @export
 CashflowCalculation  <- function(today, start.date, maturity.date, type,
                                      time.unit, dcc, calendar, currency) {
+  eom.check <- (lubridate::ceiling_date(start.date, "month") - lubridate::days(1)) == start.date
   s <- lubridate::year(start.date)
   m <- lubridate::year(maturity.date)
-  cashflows <- ((seq_len((m - s) * (12/time.unit) + 1) - 1) * time.unit) %>%
-    purrr::map_dbl(~RQuantLib::advance(calendar = calendar,
-                                       dates = start.date,
-                                       n = .x,
-                                       timeUnit = 2,
-                                       bdc = 1,
-                                       emr = TRUE)) %>%
-    lubridate::as_date()
+  months.forward <- ((seq_len((m - s) * (12/time.unit) + 1) - 1) * time.unit)
+  cashflows <- (start.date %m+% months(months.forward, abbreviate = TRUE)) %>%
+    AdvanceDate(currency, eom.check)
 
   if (start.date < today) cashflows <- c(cashflows, today)
 
@@ -50,12 +75,7 @@ CashflowCalculation  <- function(today, start.date, maturity.date, type,
     if (stringr::str_detect(type, "floating")) {
       lag <- swap.standard.calendar[
         grepl(currency,  swap.standard.calendar$currency),][["lag"]]
-      fixing.date <- RQuantLib::advance(calendar = calendar,
-                                        dates = accrual.date,
-                                        n = -lag,
-                                        timeUnit = 0,
-                                        bdc = 1,
-                                        emr = TRUE)
+      fixing.date <- AdvanceDate(accrual.date - lag, currency, TRUE)
     } else {
       fixing.date <- NULL
     }
@@ -66,9 +86,8 @@ CashflowCalculation  <- function(today, start.date, maturity.date, type,
   }
 
   cashflows <- fmdates::year_frac(today, cashflows, dcc)
-  cashflows <- tibble::tibble(yf = cashflows[cashflows >= 0]) %>%
-    dplyr::arrange(.data$yf)
-
+  cashflows <- sort(cashflows[cashflows >= 0])
+  cashflows <- tibble::tibble(yf = cashflows)
 
   return(list(cashflows = cashflows, accrual.yf = accrual.yf,
               fixing.date = fixing.date))

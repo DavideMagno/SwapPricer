@@ -109,10 +109,20 @@ From this data we extracted the two most important columns, which will be used i
 * **t2m** which is the time to maturity of the different pillar points in the curve
 * **df** the discount factor calculated for each pillar point
 
-Now you have the two most important inputs that are needed to run your pricer.
+This data has to be stored in a tibble called **discount**. This tibble has to be
+part of a list which will also contain the code of the curve currency.
+
+Here's the structure of an example of interest rate list:
+
+```{r, echo = FALSE}
+str(SwapPricer::EUR.curves)
+```
+
+Now you have the two most important inputs that are needed to run your pricer. It is important to note that the interest rate curves' lists have to cover all the currencies present in the swap portfolio.
+
 
 ```{r}
-today <- lubridate::ymd(20190414)
+today <- lubridate::ymd(20190415)
 
 result <- SwapPricer::SwapPortfolioPricing(SwapPricer::swap.basket, today, SwapPricer::EUR.curves, SwapPricer::GBP.curves, SwapPricer::USD.curves) 
 ```
