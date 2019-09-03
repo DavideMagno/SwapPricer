@@ -9,7 +9,7 @@ SwapCashFlowCalculation(today, swap)
 \arguments{
 \item{today}{The Date at which the analysis is being carried out}
 
-\item{swap}{A list with the swap's carachteristics}
+\item{swap}{A list with the swap's charachteristics}
 }
 \value{
 A list with all the main pricing information for the contract

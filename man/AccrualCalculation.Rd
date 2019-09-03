@@ -10,10 +10,10 @@ AccrualCalculation(swap.dates, leg.type, swap, direction, floating.history)
 \item{swap.dates}{A list of lists with the main cashflow information for
 both the legs}
 
-\item{leg.type}{A charachter that describes whether the leg is payer or
+\item{leg.type}{A char that describes whether the leg is payer or
 receiver}
 
-\item{swap}{A list with the swap's carachteristics}
+\item{swap}{A list with the swap's charachteristics}
 
 \item{direction}{A parameter that gets a value of 1 for receiver swaps and -1
 for payer swaps}

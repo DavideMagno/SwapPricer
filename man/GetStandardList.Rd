@@ -19,7 +19,7 @@ payer}
 swap}
 }
 \value{
-a flist of standard characteristics for both the legs
+a list of standard characteristics for both the legs
 }
 \description{
 This function calls other helper functions to format a swap list from the

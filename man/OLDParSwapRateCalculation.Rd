@@ -10,7 +10,7 @@ OLDParSwapRateCalculation(swap.dates, swap, df.table)
 \item{swap.dates}{A list of lists with the main cashflow information for
 both the legs}
 
-\item{swap}{A list with the swap's carachteristics}
+\item{swap}{A list with the swap's charachteristics}
 
 \item{df.table}{A tibble with the discount factor curve information}
 }
