@@ -1,6 +1,6 @@
 Package: SwapPricer
 Type: Package
-Title: Pricing of financial interest rate swaps in R
+Title: Pricing of Financial Interest Rate Swaps in R
 Version: 1.0.0
 Author: Davide Magno
 Maintainer: Davide Magno <davide.magno@curiousfrm.com>
