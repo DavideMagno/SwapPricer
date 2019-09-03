@@ -10,7 +10,7 @@
 #'     \item{notional}{notional amount in double}
 #'     \item{start.date}{start date of the swap, in dmy format}
 #'     \item{maturity.date}{maturity date of the swap, in dmy format}
-#'     \item{strike}{strike rate (numerico, not in percentage terms)}
+#'     \item{strike}{strike rate (numerical, not in percentage terms)}
 #'     \item{type}{a string, either `receiver` or `payer`}
 #'     \item{standard}{a logical entry, TRUE for standard swaps, FALSE otherwise}
 #'     \item{time.unit.pay}{only if not standard, number of months of payer

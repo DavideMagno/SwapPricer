@@ -91,7 +91,7 @@ ApplyStandardConventions <- function(swap.tabular, test) {
 #' @param swap.standard an internal data.table filtered for the currency of the
 #' swap
 #'
-#' @return a flist of standard characteristics for both the legs
+#' @return a list of standard characteristics for both the legs
 GetStandardList <- function(swap.tabular, variable, test, swap.standard) {
 
   if (grepl("R|r", test)) {

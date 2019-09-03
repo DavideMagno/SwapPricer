@@ -73,8 +73,8 @@ swap_nonstandard <- list(currency = "EUR",
                          calendar = "TARGET")
 ```
 
-Alternatively (and possibly more conveniently), you can parametrise your swap 
-portfolio through Excel in a *csv* file like the following one:
+Alternatively (and possibly more conveniently), you can upload your swap 
+portfolio via a *csv* or *excel* file organised as the following table:
 
 ```{r Get_Swaps_Data, warning=FALSE, message=FALSE}
 SwapPricer::swap.basket %>% 

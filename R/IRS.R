@@ -120,7 +120,7 @@ OLDParSwapRateAlgorithm <- function(swap.cf){
 #'
 #' @param swap.dates A list of lists with the main cashflow information for
 #' both the legs
-#' @param swap A list with the swap's carachteristics
+#' @param swap A list with the swap's charachteristics
 #' @param df.table A tibble with the discount factor curve information
 #'
 #' @return A list containing the par swap rate and the annuity
@@ -148,9 +148,9 @@ OLDParSwapRateCalculation <- function(swap.dates, swap, df.table) {
 #'
 #' @param swap.dates A list of lists with the main cashflow information for
 #' both the legs
-#' @param leg.type A charachter that describes whether the leg is payer or
+#' @param leg.type A char that describes whether the leg is payer or
 #' receiver
-#' @param swap A list with the swap's carachteristics
+#' @param swap A list with the swap's charachteristics
 #' @param direction A parameter that gets a value of 1 for receiver swaps and -1
 #' for payer swaps
 #' @param floating.history A table downloaded automatically from Quandl with the
@@ -244,7 +244,7 @@ SwapPricing <- function(swap.dates, swap, today, floating.history, curves) {
 #' This function connects the cashflow generation to the swap pricing
 #'
 #' @param today The Date at which the analysis is being carried out
-#' @param swap A list with the swap's carachteristics
+#' @param swap A list with the swap's charachteristics
 #'
 #' @return A list with all the main pricing information for the contract
 #'
