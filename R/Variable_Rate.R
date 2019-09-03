@@ -2,7 +2,8 @@
 #' @importFrom purrr set_names
 #' @importFrom Quandl Quandl
 DownloadRate <- function(floating.data){
-  Quandl.api_key("5ydoG6gTCKjgzDpJp_1s")
+  Quandl::Quandl.api_key("5ydoG6gTCKjgzDpJp_1s")
+  fredr::fredr_set_key("5b73de5f5f1ce46a60d5bd93e4e670bd")
   ifelse(grepl("FRED",floating.data$source),
          list(fredr::fredr(floating.data$floating.rate.code,
                            observation_start = floating.data$min.date,
