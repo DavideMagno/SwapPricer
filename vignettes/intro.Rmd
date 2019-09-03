@@ -1,5 +1,5 @@
 ---
-title: "Intro_to_SwapPricer"
+title: "Intro to SwapPricer"
 author: "Davide Magno"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -20,13 +20,10 @@ The `SwapPricer` package allows you to price a book of interest rate swaps (IRS)
 IRS is the most traded over the counter financial derivative in the world and now
 you can easily price it in R.  
 
-Please note that as at version 0.1.0 the toolbox is able to price:
+Please note that as at version 0.2.0 the toolbox is able to price using a 
+one-curve framework
 
-1) EUR swaps that pay semi-annually on the floating leg
-
-2) Using a one-curve framework
-
-**We are working to improve the toolbox in the next releases**
+**We are working to improve the toolbox in the next releases including OIS discounting**
 
 Two main data structures are needed in order to run the SwapPriceR toolbox:
 
@@ -112,20 +109,22 @@ From this data we extracted the two most important columns, which will be used i
 * **t2m** which is the time to maturity of the different pillar points in the curve
 * **df** the discount factor calculated for each pillar point
 
-The following code was used to calculate these two columns
+This data has to be stored in a tibble called **discount**. This tibble has to be
+part of a list which will also contain the code of the curve currency.
 
-```{r, warning = FALSE}
-today <- lubridate::ymd(20190414)
+Here's the structure of an example of interest rate list:
 
-SwapPricer::df.table %>% 
-  knitr::kable(caption = "Discount Factor Curve", "html") %>% 
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>% 
-  kableExtra::scroll_box(height = "500px")
+```{r, echo = FALSE}
+str(SwapPricer::EUR.curves)
 ```
-Now you have the two most important inputs that are needed to run your pricer.
+
+Now you have the two most important inputs that are needed to run your pricer. It is important to note that the interest rate curves' lists have to cover all the currencies present in the swap portfolio.
+
 
 ```{r}
-result <- SwapPricer::SwapPortfolioPricing(SwapPricer::swap.basket, today, SwapPricer::df.table) 
+today <- lubridate::ymd(20190415)
+
+result <- SwapPricer::SwapPortfolioPricing(SwapPricer::swap.basket, today, SwapPricer::EUR.curves, SwapPricer::GBP.curves, SwapPricer::USD.curves) 
 ```
 
 ```{r, echo = FALSE}

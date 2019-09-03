@@ -25,15 +25,51 @@
 #'     holiday's calendar}
 #' }
 "swap.basket"
-#' A discount factor term structure
+#' EUR interest rate curve set
 #'
-#' A table containing the discount factor term structure
+#' A list containing the currency of the curve and the discount factor term structure
 #'
-#' @format A tibble with 26 rows and 2 columns:
+#' @format A list with two elements :
 #' \describe{
-#'    \item{t2m}{a day fraction representing the time to maturity of the
-#'    instruments used for constructing the discount factor curve}
-#'    \item{df}{the level of the discount factor for that time to maturity}
+#'    \item{currency}{with the ISO code of the currency (EUR)}
+#'    \item{discount}{a tibble containing the following two columns:}
+#'    \itemize{
+#'          \item t2m: a day fraction representing the time to maturity of the
+#'    instruments used for constructing the discount factor curve
+#'          \item df: the level of the discount factor for that time to maturity
+#'    }
 #'}
 #' @source Bloomberg SWPM page as at the 15th of April 2019
-"df.table"
+"EUR.curves"
+#' GBP interest rate curve set
+#'
+#' A list containing the currency of the curve and the discount factor term structure
+#'
+#' @format A list with two elements :
+#' \describe{
+#'    \item{currency}{with the ISO code of the currency (GBP)}
+#'    \item{discount}{a tibble containing the following two columns:}
+#'    \itemize{
+#'          \item t2m: a day fraction representing the time to maturity of the
+#'    instruments used for constructing the discount factor curve
+#'          \item df: the level of the discount factor for that time to maturity
+#'    }
+#'}
+#' @source Bloomberg SWPM page as at the 15th of April 2019
+"GBP.curves"
+#' USD interest rate curve set
+#'
+#' A list containing the currency of the curve and the discount factor term structure
+#'
+#' @format A list with two elements :
+#' \describe{
+#'    \item{currency}{with the ISO code of the currency (USD)}
+#'    \item{discount}{a tibble containing the following two columns:}
+#'    \itemize{
+#'          \item t2m: a day fraction representing the time to maturity of the
+#'    instruments used for constructing the discount factor curve
+#'          \item df: the level of the discount factor for that time to maturity
+#'    }
+#'}
+#' @source Bloomberg SWPM page as at the 15th of April 2019
+"USD.curves"

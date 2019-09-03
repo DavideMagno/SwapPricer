@@ -28,11 +28,10 @@ IRS is the most traded over the counter financial derivative in the world and no
 you can easily price it in R. More details on the financial characteristics of
 this contract can be found [here](https://en.wikipedia.org/wiki/Interest_rate_swap)
 
-Please note that as at version 0.1.0 the toolbox is able to price:
-
-1) EUR swaps that pay semi-annually on the floating leg
-
-2) Using a one-curve framework
+Please note that as at version 0.2.0 the toolbox is able to price using just a 
+one-curve framework but is able to price multiple currencies (ie. CHF, EUR, GBP,
+JPY and USD) and any convention in terms of coupon frequency, day count convention
+and holiday calendar.
 
 **We are working to introduce all these issues in the next releases**
 
@@ -49,24 +48,39 @@ devtools::install_github("DavideMagno/SwapPricer")
 The main function of the toolbox is `SwapPortfolioPricing` which uses just three
 inputs:
 
-1) A table with the characteristics of the swap
+1) A table with the characteristics of the swap, like the following one
+
+```{r, echo = FALSE, message = FALSE}
+knitr::kable(SwapPricer::swap.basket, caption = "Input Portfolio", "html")
+```
 
 2) The date at which the swaps are being priced
 
-3) A table with the discounting factor curve
+3) As many interest rate lists as per the currencies in the swap portfolio.
+The list is made of a string with the code of the currency and a with a tibble
+with the discounting factor curve with two columns: Dates and Discount Factors (df). 
+Here is an example of interest rate list:
+
+```{r, message = FALSE}
+SwapPricer::EUR.curves
+```
 
 Examples of items 1 and 3 have been provided with the package.
 
 ```{r example, eval = FALSE}
 library(SwapPricer)
-SwapPortfolioPricing(SwapPricer::swap.basket, lubridate::ymd(20190414), SwapPricer::df.table)
+today <- lubridate::ymd(20190415)
+SwapPricer::SwapPortfolioPricing(SwapPricer::swap.basket, today, 
+                                 SwapPricer::EUR.curves, SwapPricer::GBP.curves,
+                                 SwapPricer::USD.curves) 
 ```
 
 This function returns a table that can be easily used for reporting like below
 
-```{r cars, message = FALSE, echo = FALSE}
+```{r example_table, message = FALSE, echo = FALSE, warning = FALSE}
 library(SwapPricer)
-SwapPricer::SwapPortfolioPricing(SwapPricer::swap.basket, lubridate::ymd(20190414), SwapPricer::df.table) %>% 
+today <- lubridate::ymd(20190415)
+SwapPricer::SwapPortfolioPricing(SwapPricer::swap.basket, today, SwapPricer::EUR.curves, SwapPricer::GBP.curves, SwapPricer::USD.curves)  %>% 
   dplyr::mutate_at(dplyr::vars("clean.mv","dirty.mv","accrual.pay","accrual.receive","pv01"),
                    formattable::comma) %>%
   dplyr::mutate_at(dplyr::vars("par"), formattable::percent) %>%

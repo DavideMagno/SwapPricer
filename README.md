@@ -19,11 +19,10 @@ derivative in the world and now you can easily price it in R. More
 details on the financial characteristics of this contract can be found
 [here](https://en.wikipedia.org/wiki/Interest_rate_swap)
 
-Please note that as at version 0.1.0 the toolbox is able to price:
-
-1)  EUR swaps that pay semi-annually on the floating leg
-
-2)  Using a one-curve framework
+Please note that as at version 0.2.0 the toolbox is able to price using
+just a one-curve framework but is able to price multiple currencies (ie.
+CHF, EUR, GBP, JPY and USD) and any convention in terms of coupon
+frequency, day count convention and holiday calendar.
 
 **We are working to introduce all these issues in the next releases**
 
@@ -42,17 +41,892 @@ devtools::install_github("DavideMagno/SwapPricer")
 The main function of the toolbox is `SwapPortfolioPricing` which uses
 just three inputs:
 
-1)  A table with the characteristics of the swap
+1)  A table with the characteristics of the swap, like the following one
+
+<!-- end list -->
+
+    #> Registered S3 method overwritten by 'xts':
+    #>   method     from
+    #>   as.zoo.xts zoo
+
+<table>
+
+<caption>
+
+Input Portfolio
+
+</caption>
+
+<thead>
+
+<tr>
+
+<th style="text-align:left;">
+
+ID
+
+</th>
+
+<th style="text-align:left;">
+
+currency
+
+</th>
+
+<th style="text-align:right;">
+
+notional
+
+</th>
+
+<th style="text-align:left;">
+
+start.date
+
+</th>
+
+<th style="text-align:left;">
+
+maturity.date
+
+</th>
+
+<th style="text-align:right;">
+
+strike
+
+</th>
+
+<th style="text-align:left;">
+
+type
+
+</th>
+
+<th style="text-align:left;">
+
+standard
+
+</th>
+
+<th style="text-align:right;">
+
+time.unit.pay
+
+</th>
+
+<th style="text-align:right;">
+
+time.unit.receive
+
+</th>
+
+<th style="text-align:left;">
+
+dcc.pay
+
+</th>
+
+<th style="text-align:left;">
+
+dcc.receive
+
+</th>
+
+<th style="text-align:left;">
+
+calendar
+
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td style="text-align:left;">
+
+Swap 25y
+
+</td>
+
+<td style="text-align:left;">
+
+EUR
+
+</td>
+
+<td style="text-align:right;">
+
+1.0e+07
+
+</td>
+
+<td style="text-align:left;">
+
+19/01/2007
+
+</td>
+
+<td style="text-align:left;">
+
+19/01/2032
+
+</td>
+
+<td style="text-align:right;">
+
+0.0005982
+
+</td>
+
+<td style="text-align:left;">
+
+receiver
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+<td style="text-align:right;">
+
+NA
+
+</td>
+
+<td style="text-align:right;">
+
+NA
+
+</td>
+
+<td style="text-align:left;">
+
+NA
+
+</td>
+
+<td style="text-align:left;">
+
+NA
+
+</td>
+
+<td style="text-align:left;">
+
+NA
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Swap 30y
+
+</td>
+
+<td style="text-align:left;">
+
+GBP
+
+</td>
+
+<td style="text-align:right;">
+
+1.0e+06
+
+</td>
+
+<td style="text-align:left;">
+
+24/04/2012
+
+</td>
+
+<td style="text-align:left;">
+
+24/04/2042
+
+</td>
+
+<td style="text-align:right;">
+
+0.0100000
+
+</td>
+
+<td style="text-align:left;">
+
+payer
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+<td style="text-align:right;">
+
+NA
+
+</td>
+
+<td style="text-align:right;">
+
+NA
+
+</td>
+
+<td style="text-align:left;">
+
+NA
+
+</td>
+
+<td style="text-align:left;">
+
+NA
+
+</td>
+
+<td style="text-align:left;">
+
+NA
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Swap 10y
+
+</td>
+
+<td style="text-align:left;">
+
+USD
+
+</td>
+
+<td style="text-align:right;">
+
+2.0e+06
+
+</td>
+
+<td style="text-align:left;">
+
+21/02/2012
+
+</td>
+
+<td style="text-align:left;">
+
+21/02/2022
+
+</td>
+
+<td style="text-align:right;">
+
+0.0025000
+
+</td>
+
+<td style="text-align:left;">
+
+receiver
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+<td style="text-align:right;">
+
+NA
+
+</td>
+
+<td style="text-align:right;">
+
+NA
+
+</td>
+
+<td style="text-align:left;">
+
+NA
+
+</td>
+
+<td style="text-align:left;">
+
+NA
+
+</td>
+
+<td style="text-align:left;">
+
+NA
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Swap 2y16y
+
+</td>
+
+<td style="text-align:left;">
+
+GBP
+
+</td>
+
+<td style="text-align:right;">
+
+7.5e+06
+
+</td>
+
+<td style="text-align:left;">
+
+14/04/2021
+
+</td>
+
+<td style="text-align:left;">
+
+14/04/2037
+
+</td>
+
+<td style="text-align:right;">
+
+0.0150000
+
+</td>
+
+<td style="text-align:left;">
+
+receiver
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+<td style="text-align:right;">
+
+NA
+
+</td>
+
+<td style="text-align:right;">
+
+NA
+
+</td>
+
+<td style="text-align:left;">
+
+NA
+
+</td>
+
+<td style="text-align:left;">
+
+NA
+
+</td>
+
+<td style="text-align:left;">
+
+NA
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Swap non standard
+
+</td>
+
+<td style="text-align:left;">
+
+EUR
+
+</td>
+
+<td style="text-align:right;">
+
+1.5e+07
+
+</td>
+
+<td style="text-align:left;">
+
+26/05/2014
+
+</td>
+
+<td style="text-align:left;">
+
+26/05/2039
+
+</td>
+
+<td style="text-align:right;">
+
+0.0200000
+
+</td>
+
+<td style="text-align:left;">
+
+payer
+
+</td>
+
+<td style="text-align:left;">
+
+FALSE
+
+</td>
+
+<td style="text-align:right;">
+
+12
+
+</td>
+
+<td style="text-align:right;">
+
+3
+
+</td>
+
+<td style="text-align:left;">
+
+act/365
+
+</td>
+
+<td style="text-align:left;">
+
+act/365
+
+</td>
+
+<td style="text-align:left;">
+
+TARGET
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Swap 10y semi fixed
+
+</td>
+
+<td style="text-align:left;">
+
+EUR
+
+</td>
+
+<td style="text-align:right;">
+
+1.0e+07
+
+</td>
+
+<td style="text-align:left;">
+
+26/05/2014
+
+</td>
+
+<td style="text-align:left;">
+
+26/05/2024
+
+</td>
+
+<td style="text-align:right;">
+
+0.0010000
+
+</td>
+
+<td style="text-align:left;">
+
+payer
+
+</td>
+
+<td style="text-align:left;">
+
+FALSE
+
+</td>
+
+<td style="text-align:right;">
+
+6
+
+</td>
+
+<td style="text-align:right;">
+
+6
+
+</td>
+
+<td style="text-align:left;">
+
+act/365
+
+</td>
+
+<td style="text-align:left;">
+
+act/365
+
+</td>
+
+<td style="text-align:left;">
+
+TARGET
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Swap 30y quarter floating
+
+</td>
+
+<td style="text-align:left;">
+
+GBP
+
+</td>
+
+<td style="text-align:right;">
+
+1.0e+06
+
+</td>
+
+<td style="text-align:left;">
+
+24/04/2012
+
+</td>
+
+<td style="text-align:left;">
+
+24/04/2042
+
+</td>
+
+<td style="text-align:right;">
+
+0.0200000
+
+</td>
+
+<td style="text-align:left;">
+
+receiver
+
+</td>
+
+<td style="text-align:left;">
+
+FALSE
+
+</td>
+
+<td style="text-align:right;">
+
+3
+
+</td>
+
+<td style="text-align:right;">
+
+12
+
+</td>
+
+<td style="text-align:left;">
+
+act/360
+
+</td>
+
+<td style="text-align:left;">
+
+act/365
+
+</td>
+
+<td style="text-align:left;">
+
+UnitedKingdom
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Swap 10y irregular
+
+</td>
+
+<td style="text-align:left;">
+
+USD
+
+</td>
+
+<td style="text-align:right;">
+
+2.0e+06
+
+</td>
+
+<td style="text-align:left;">
+
+21/02/2012
+
+</td>
+
+<td style="text-align:left;">
+
+21/02/2022
+
+</td>
+
+<td style="text-align:right;">
+
+0.0025000
+
+</td>
+
+<td style="text-align:left;">
+
+receiver
+
+</td>
+
+<td style="text-align:left;">
+
+FALSE
+
+</td>
+
+<td style="text-align:right;">
+
+6
+
+</td>
+
+<td style="text-align:right;">
+
+12
+
+</td>
+
+<td style="text-align:left;">
+
+act/365
+
+</td>
+
+<td style="text-align:left;">
+
+act/365
+
+</td>
+
+<td style="text-align:left;">
+
+TARGET
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Swap 2y16y
+
+</td>
+
+<td style="text-align:left;">
+
+EUR
+
+</td>
+
+<td style="text-align:right;">
+
+7.5e+06
+
+</td>
+
+<td style="text-align:left;">
+
+14/04/2021
+
+</td>
+
+<td style="text-align:left;">
+
+14/04/2037
+
+</td>
+
+<td style="text-align:right;">
+
+0.0150000
+
+</td>
+
+<td style="text-align:left;">
+
+payer
+
+</td>
+
+<td style="text-align:left;">
+
+FALSE
+
+</td>
+
+<td style="text-align:right;">
+
+12
+
+</td>
+
+<td style="text-align:right;">
+
+12
+
+</td>
+
+<td style="text-align:left;">
+
+act/365
+
+</td>
+
+<td style="text-align:left;">
+
+act/360
+
+</td>
+
+<td style="text-align:left;">
+
+TARGET
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
 
 2)  The date at which the swaps are being priced
 
-3)  A table with the discounting factor curve
+3)  As many interest rate lists as per the currencies in the swap
+    portfolio. The list is made of a string with the code of the
+    currency and a with a tibble with the discounting factor curve with
+    two columns: Dates and Discount Factors (df). Here is an example of
+    interest rate list:
+
+<!-- end list -->
+
+``` r
+SwapPricer::EUR.curves
+#> $currency
+#> [1] "EUR"
+#> 
+#> $discount
+#> # A tibble: 26 x 2
+#>    Date          df
+#>    <date>     <dbl>
+#>  1 2019-04-15  1   
+#>  2 2019-04-23  1.00
+#>  3 2019-05-16  1.00
+#>  4 2019-07-16  1.00
+#>  5 2019-10-16  1.00
+#>  6 2020-04-16  1.00
+#>  7 2020-10-16  1.00
+#>  8 2021-04-16  1.00
+#>  9 2022-04-19  1.00
+#> 10 2023-04-17  1.00
+#> # … with 16 more rows
+```
 
 Examples of items 1 and 3 have been provided with the package.
 
 ``` r
 library(SwapPricer)
-SwapPortfolioPricing(SwapPricer::swap.basket, lubridate::ymd(20190414), SwapPricer::df.table)
+today <- lubridate::ymd(20190415)
+SwapPricer::SwapPortfolioPricing(SwapPricer::swap.basket, today, 
+                                 SwapPricer::EUR.curves, SwapPricer::GBP.curves,
+                                 SwapPricer::USD.curves) 
 ```
 
 This function returns a table that can be easily used for reporting like
@@ -73,6 +947,12 @@ Pricing results
 <th style="text-align:left;">
 
 swap.id
+
+</th>
+
+<th style="text-align:left;">
+
+currency
 
 </th>
 
@@ -126,27 +1006,33 @@ Swap 25y
 
 </td>
 
-<td style="text-align:right;">
+<td style="text-align:left;">
 
-\-881,814.61
-
-</td>
-
-<td style="text-align:right;">
-
-\-874,994.32
+EUR
 
 </td>
 
 <td style="text-align:right;">
 
-5,441.11
+\-881,831.25
 
 </td>
 
 <td style="text-align:right;">
 
-1,379.18
+\-874,952.12
+
+</td>
+
+<td style="text-align:right;">
+
+5,483.33
+
+</td>
+
+<td style="text-align:right;">
+
+1,395.80
 
 </td>
 
@@ -158,7 +1044,7 @@ Swap 25y
 
 <td style="text-align:right;">
 
-\-12,393.65
+\-12,390.87
 
 </td>
 
@@ -172,39 +1058,45 @@ Swap 30y
 
 </td>
 
-<td style="text-align:right;">
+<td style="text-align:left;">
 
-233,691.75
-
-</td>
-
-<td style="text-align:right;">
-
-123,999.52
+GBP
 
 </td>
 
 <td style="text-align:right;">
 
-\-97,222.22
+105,100.25
 
 </td>
 
 <td style="text-align:right;">
 
-\-12,470.00
+104,665.66
 
 </td>
 
 <td style="text-align:right;">
 
-1.11%
+\-4,739.73
 
 </td>
 
 <td style="text-align:right;">
 
-20,867.00
+4,305.14
+
+</td>
+
+<td style="text-align:right;">
+
+1.54%
+
+</td>
+
+<td style="text-align:right;">
+
+1,948.27
 
 </td>
 
@@ -218,39 +1110,45 @@ Swap 10y
 
 </td>
 
-<td style="text-align:right;">
+<td style="text-align:left;">
 
-222,083.28
-
-</td>
-
-<td style="text-align:right;">
-
-236,146.61
+USD
 
 </td>
 
 <td style="text-align:right;">
 
-6,702.22
+\-119,333.64
 
 </td>
 
 <td style="text-align:right;">
 
-7,361.11
+\-126,360.65
 
 </td>
 
 <td style="text-align:right;">
 
-\-0.14%
+\-7,777.01
 
 </td>
 
 <td style="text-align:right;">
 
-\-5,724.42
+750.00
+
+</td>
+
+<td style="text-align:right;">
+
+2.43%
+
+</td>
+
+<td style="text-align:right;">
+
+\-547.60
 
 </td>
 
@@ -264,15 +1162,281 @@ Swap 2y16y
 
 </td>
 
-<td style="text-align:right;">
+<td style="text-align:left;">
 
-360,095.21
+GBP
 
 </td>
 
 <td style="text-align:right;">
 
-360,095.21
+\-94,850.43
+
+</td>
+
+<td style="text-align:right;">
+
+\-94,850.43
+
+</td>
+
+<td style="text-align:right;">
+
+\-0.00
+
+</td>
+
+<td style="text-align:right;">
+
+0.00
+
+</td>
+
+<td style="text-align:right;">
+
+1.59%
+
+</td>
+
+<td style="text-align:right;">
+
+\-10,393.05
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Swap non standard
+
+</td>
+
+<td style="text-align:left;">
+
+EUR
+
+</td>
+
+<td style="text-align:right;">
+
+\-2,590,941.00
+
+</td>
+
+<td style="text-align:right;">
+
+\-2,861,713.60
+
+</td>
+
+<td style="text-align:right;">
+
+\-264,657.53
+
+</td>
+
+<td style="text-align:right;">
+
+\-6,115.07
+
+</td>
+
+<td style="text-align:right;">
+
+1.07%
+
+</td>
+
+<td style="text-align:right;">
+
+27,912.93
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Swap 10y semi fixed
+
+</td>
+
+<td style="text-align:left;">
+
+EUR
+
+</td>
+
+<td style="text-align:right;">
+
+\-16,313.13
+
+</td>
+
+<td style="text-align:right;">
+
+\-30,006.28
+
+</td>
+
+<td style="text-align:right;">
+
+\-3,835.62
+
+</td>
+
+<td style="text-align:right;">
+
+\-9,857.53
+
+</td>
+
+<td style="text-align:right;">
+
+0.07%
+
+</td>
+
+<td style="text-align:right;">
+
+5,129.68
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Swap 30y quarter floating
+
+</td>
+
+<td style="text-align:left;">
+
+GBP
+
+</td>
+
+<td style="text-align:right;">
+
+88,228.04
+
+</td>
+
+<td style="text-align:right;">
+
+105,652.23
+
+</td>
+
+<td style="text-align:right;">
+
+\-2,082.67
+
+</td>
+
+<td style="text-align:right;">
+
+19,506.85
+
+</td>
+
+<td style="text-align:right;">
+
+1.55%
+
+</td>
+
+<td style="text-align:right;">
+
+\-1,940.77
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Swap 10y irregular
+
+</td>
+
+<td style="text-align:left;">
+
+USD
+
+</td>
+
+<td style="text-align:right;">
+
+\-119,608.54
+
+</td>
+
+<td style="text-align:right;">
+
+\-126,827.43
+
+</td>
+
+<td style="text-align:right;">
+
+\-7,944.92
+
+</td>
+
+<td style="text-align:right;">
+
+726.03
+
+</td>
+
+<td style="text-align:right;">
+
+2.44%
+
+</td>
+
+<td style="text-align:right;">
+
+\-545.92
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Swap 2y16y
+
+</td>
+
+<td style="text-align:left;">
+
+EUR
+
+</td>
+
+<td style="text-align:right;">
+
+\-361,098.10
+
+</td>
+
+<td style="text-align:right;">
+
+\-361,098.10
 
 </td>
 
@@ -296,53 +1460,7 @@ Swap 2y16y
 
 <td style="text-align:right;">
 
-\-11,163.37
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-Swap non standard
-
-</td>
-
-<td style="text-align:right;">
-
-\-2,588,828.67
-
-</td>
-
-<td style="text-align:right;">
-
-\-2,867,344.97
-
-</td>
-
-<td style="text-align:right;">
-
-\-263,835.62
-
-</td>
-
-<td style="text-align:right;">
-
-\-14,680.68
-
-</td>
-
-<td style="text-align:right;">
-
-1.07%
-
-</td>
-
-<td style="text-align:right;">
-
-27,914.07
+11,170.90
 
 </td>
 

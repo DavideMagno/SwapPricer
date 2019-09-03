@@ -10,8 +10,6 @@
 #'
 #' @importFrom purrr discard
 #' @importFrom stringr str_detect str_sub
-#'
-#' @export
 SwapPortfolioFormatting <- function(swap.tabular) {
   swap.tabular %<>%
     purrr::discard(is.na)
@@ -33,6 +31,12 @@ SwapPortfolioFormatting <- function(swap.tabular) {
                              receive = swap.tabular$dcc.receive)
   }
 
+  if (grepl("P|p", test)) {
+    swap.tabular$floating.freq <- swap.tabular$time.unit$receive
+  } else if (grepl("R|r", test)) {
+    swap.tabular$floating.freq <- swap.tabular$time.unit$pay
+  }
+
   swap.tabular %<>%
     purrr::discard(stringr::str_detect(swap.tabular %>% names,
                                        "pay|receive|standard|ID") == TRUE)
@@ -51,11 +55,15 @@ SwapPortfolioFormatting <- function(swap.tabular) {
 #'
 #' @return a formatted version of the contract that is readable by the functions
 #' in the toolbox
-#'
-#' @export
 ApplyStandardConventions <- function(swap.tabular, test) {
+
   swap.standard <- swap.standard[grepl(swap.tabular$currency,
                                        swap.standard$currency),]
+
+  if (nrow(swap.standard) == 0) {
+    stop(paste0("The toolbox currently doesn't model swaps denominated in ",
+                swap.tabular$currency), call. = FALSE)
+  }
 
   swap.tabular$time.unit <- swap.tabular %>%
     GetStandardList("time.unit", test, swap.standard)
@@ -84,20 +92,46 @@ ApplyStandardConventions <- function(swap.tabular, test) {
 #' swap
 #'
 #' @return a flist of standard characteristics for both the legs
-#'
-#' @export
 GetStandardList <- function(swap.tabular, variable, test, swap.standard) {
 
   if (grepl("R|r", test)) {
-    convention <- list(pay = swap.standard[grepl("floating", swap.standard$leg),
-                                           variable],
-                       receive = swap.standard[grepl("fixed",
-                                                     swap.standard$leg),variable])
+    convention <-
+      list(pay = swap.standard[grepl("floating", swap.standard$leg),][[variable]],
+           receive = swap.standard[grepl("fixed",swap.standard$leg),][[variable]])
   } else {
-    convention <- list(pay = swap.standard[grepl("fixed", swap.standard$leg),
-                                           variable],
-                       receive = swap.standard[grepl("floating",
-                                                     swap.standard$leg),variable])
+    convention <-
+      list(pay = swap.standard[grepl("fixed", swap.standard$leg),][[variable]],
+           receive = swap.standard[grepl("floating", swap.standard$leg),][[variable]])
     }
   return(convention)
+}
+
+
+#' @importFrom purrr flatten
+ExtractFromList <- function(swap.portfolio, item) {
+  swap.portfolio %>%
+    purrr::map(purrr::pluck(item)) %>%
+    flatten %>%
+    purrr::reduce(c)
+}
+
+CalculateCurvesDCC <- function(curves, swap.portfolio, today){
+  dcc.tibble <- tibble::tibble(
+    currency = rep(ExtractFromList(swap.portfolio, "currency"), each = 2),
+    type = ExtractFromList(swap.portfolio, "type"),
+    dcc = ExtractFromList(swap.portfolio, "dcc")
+  ) %>%
+    dplyr::filter(grepl("fixed", .data$type)) %>%
+    dplyr::distinct()
+
+  for (row in purrr::transpose(dcc.tibble)) {
+    curves[[row$currency]]$discount %<>%
+      dplyr::mutate(!!row$dcc := fmdates::year_frac(today, .data$Date, row$dcc))
+  }
+
+  discount.curves <- map(curves, ~.x$discount %>%
+                           select(-Date) %>%
+                           {rbind(c(1,rep(0, ncol(.x$discount) - 1)),.)})
+
+  list(discount = discount.curves)
 }
