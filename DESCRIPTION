@@ -8,7 +8,8 @@ Description: This toolbox calculates the price and risk characteristics of
     interest rate swaps, a widely used financial instrument. Please refer to the
     vignettes to understand how to setup the input data and run the main 
     routines. The current version of the toolbox can price standard and non 
-    standard swaps denominated in CHF, EUR, GBP, JPY and USD.
+    standard swaps denominated in Swiss Franc, Euro, UK Sterling, Japanese Yen 
+    and US Dollars.
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
