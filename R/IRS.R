@@ -130,11 +130,15 @@ OLDParSwapRateAlgorithm <- function(swap.cf){
 #' @importFrom stats approx
 #'
 #' @export
+
+
 OLDParSwapRateCalculation <- function(swap.dates, swap, df.table) {
+  browser()
   switch(swap$type$pay,
          "fixed" = swap.dates$pay$cashflows,
          "floating" = swap.dates$receive$cashflows) %>%
-    dplyr::mutate(df = stats::approx(df.table$t2m, log(df.table$df), .data$yf) %>%
+    dplyr::mutate(df = stats::approx(df.table$t2m, log(df.table$df), .data$yf,
+                                     ties = mean) %>%
                     purrr::pluck("y") %>%
                     exp) %>%
     OLDParSwapRateAlgorithm

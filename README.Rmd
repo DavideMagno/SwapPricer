@@ -19,9 +19,16 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 [![Project Status:Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/SwapPricer)](https://CRAN.R-project.org/package=SwapPricer)
-
 [![Travis build status](https://travis-ci.org/DavideMagno/SwapPricer.svg?branch=master)](https://travis-ci.org/DavideMagno/SwapPricer)
 <!-- badges: end -->
+
+```{r formatter, echo = FALSE}
+library(formattable)
+sign_formatter <- formatter("span", 
+  style = x ~ style(color = ifelse(x > 0, "green", 
+    ifelse(x < 0, "red", "black"))))
+```
+
 
 The goal of SwapPricer is to allow you to price a book of interest rate swaps (IRS).
 IRS is the most traded over the counter financial derivative in the world and now
@@ -33,7 +40,7 @@ one-curve framework but is able to price multiple currencies (ie. CHF, EUR, GBP,
 JPY and USD) and any convention in terms of coupon frequency, day count convention
 and holiday calendar.
 
-**We are working to introduce all these issues in the next releases**
+**We are working to introduce OIS Discounting in the next releases**
 
 ## Installation
 
@@ -50,7 +57,7 @@ inputs:
 
 1) A table with the characteristics of the swap, like the following one
 
-```{r, echo = FALSE, message = FALSE}
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
 knitr::kable(SwapPricer::swap.basket, caption = "Input Portfolio", "html")
 ```
 
