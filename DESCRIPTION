@@ -36,6 +36,6 @@ Suggests:
 Depends:
     R (>= 2.10)
 VignetteBuilder: knitr
-URL: https://github.com/DavideMagno/SwapPricer
+URL: https://github.com/DavideMagno/SwapPricer, https://www.curiousfrm.com/
 BugReports: https://github.com/DavideMagno/SwapPricer/issues
-License: GPL-3 + file LICENSE
+License: GPL-3
