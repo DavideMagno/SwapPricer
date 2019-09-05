@@ -1,6 +1,6 @@
 Package: SwapPricer
 Type: Package
-Title: Pricing of Financial Interest Rate Swaps in R
+Title: Pricing of Financial Interest Rate Swaps
 Version: 1.0.0
 Author: Davide Magno
 Maintainer: Davide Magno <davide.magno@curiousfrm.com>
@@ -9,7 +9,8 @@ Description: This toolbox calculates the price and risk characteristics of
     vignettes to understand how to setup the input data and run the main 
     routines. The current version of the toolbox can price standard and non 
     standard swaps denominated in Swiss Franc, Euro, UK Sterling, Japanese Yen 
-    and US Dollars.
+    and US Dollars using a one curve approach. The functions in this package 
+    implement the methodology present in the following paper:<arXiv:0905.2770>
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
