@@ -925,52 +925,6 @@ SwapPricer::SwapPortfolioPricing(SwapPricer::swap.basket, today,
 This function returns a table that can be easily used for reporting like
 below
 
-    #> Called from: OLDParSwapRateCalculation(swap.dates, swap, df.table)
-    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#137: switch(swap$type$pay, fixed = swap.dates$pay$cashflows, floating = swap.dates$receive$cashflows) %>% 
-    #>     dplyr::mutate(df = stats::approx(df.table$t2m, log(df.table$df), 
-    #>         .data$yf, ties = mean) %>% purrr::pluck("y") %>% exp) %>% 
-    #>     OLDParSwapRateAlgorithm
-    #> Called from: OLDParSwapRateCalculation(swap.dates, swap, df.table)
-    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#137: switch(swap$type$pay, fixed = swap.dates$pay$cashflows, floating = swap.dates$receive$cashflows) %>% 
-    #>     dplyr::mutate(df = stats::approx(df.table$t2m, log(df.table$df), 
-    #>         .data$yf, ties = mean) %>% purrr::pluck("y") %>% exp) %>% 
-    #>     OLDParSwapRateAlgorithm
-    #> Called from: OLDParSwapRateCalculation(swap.dates, swap, df.table)
-    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#137: switch(swap$type$pay, fixed = swap.dates$pay$cashflows, floating = swap.dates$receive$cashflows) %>% 
-    #>     dplyr::mutate(df = stats::approx(df.table$t2m, log(df.table$df), 
-    #>         .data$yf, ties = mean) %>% purrr::pluck("y") %>% exp) %>% 
-    #>     OLDParSwapRateAlgorithm
-    #> Called from: OLDParSwapRateCalculation(swap.dates, swap, df.table)
-    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#137: switch(swap$type$pay, fixed = swap.dates$pay$cashflows, floating = swap.dates$receive$cashflows) %>% 
-    #>     dplyr::mutate(df = stats::approx(df.table$t2m, log(df.table$df), 
-    #>         .data$yf, ties = mean) %>% purrr::pluck("y") %>% exp) %>% 
-    #>     OLDParSwapRateAlgorithm
-    #> Called from: OLDParSwapRateCalculation(swap.dates, swap, df.table)
-    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#137: switch(swap$type$pay, fixed = swap.dates$pay$cashflows, floating = swap.dates$receive$cashflows) %>% 
-    #>     dplyr::mutate(df = stats::approx(df.table$t2m, log(df.table$df), 
-    #>         .data$yf, ties = mean) %>% purrr::pluck("y") %>% exp) %>% 
-    #>     OLDParSwapRateAlgorithm
-    #> Called from: OLDParSwapRateCalculation(swap.dates, swap, df.table)
-    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#137: switch(swap$type$pay, fixed = swap.dates$pay$cashflows, floating = swap.dates$receive$cashflows) %>% 
-    #>     dplyr::mutate(df = stats::approx(df.table$t2m, log(df.table$df), 
-    #>         .data$yf, ties = mean) %>% purrr::pluck("y") %>% exp) %>% 
-    #>     OLDParSwapRateAlgorithm
-    #> Called from: OLDParSwapRateCalculation(swap.dates, swap, df.table)
-    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#137: switch(swap$type$pay, fixed = swap.dates$pay$cashflows, floating = swap.dates$receive$cashflows) %>% 
-    #>     dplyr::mutate(df = stats::approx(df.table$t2m, log(df.table$df), 
-    #>         .data$yf, ties = mean) %>% purrr::pluck("y") %>% exp) %>% 
-    #>     OLDParSwapRateAlgorithm
-    #> Called from: OLDParSwapRateCalculation(swap.dates, swap, df.table)
-    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#137: switch(swap$type$pay, fixed = swap.dates$pay$cashflows, floating = swap.dates$receive$cashflows) %>% 
-    #>     dplyr::mutate(df = stats::approx(df.table$t2m, log(df.table$df), 
-    #>         .data$yf, ties = mean) %>% purrr::pluck("y") %>% exp) %>% 
-    #>     OLDParSwapRateAlgorithm
-    #> Called from: OLDParSwapRateCalculation(swap.dates, swap, df.table)
-    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#137: switch(swap$type$pay, fixed = swap.dates$pay$cashflows, floating = swap.dates$receive$cashflows) %>% 
-    #>     dplyr::mutate(df = stats::approx(df.table$t2m, log(df.table$df), 
-    #>         .data$yf, ties = mean) %>% purrr::pluck("y") %>% exp) %>% 
-    #>     OLDParSwapRateAlgorithm
-
 <table class="table table-striped table-hover table-condensed table-responsive" style="margin-left: auto; margin-right: auto;">
 
 <caption>
@@ -1522,4 +1476,4 @@ devtools::install_github("DavideMagno/SwapPricer", build_vignettes = TRUE)
 library(SwapPricer)
 ```
 
-You can then access them from R with the `vignette()` command.
+You can then access them from R with the `vignette()` command

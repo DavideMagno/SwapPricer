@@ -133,7 +133,6 @@ OLDParSwapRateAlgorithm <- function(swap.cf){
 
 
 OLDParSwapRateCalculation <- function(swap.dates, swap, df.table) {
-  browser()
   switch(swap$type$pay,
          "fixed" = swap.dates$pay$cashflows,
          "floating" = swap.dates$receive$cashflows) %>%

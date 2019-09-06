@@ -107,5 +107,5 @@ devtools::install_github("DavideMagno/SwapPricer", build_vignettes = TRUE)
 library(SwapPricer)
 ```
 
-You can then access them from R with the `vignette()` command.
+You can then access them from R with the `vignette()` command
 
