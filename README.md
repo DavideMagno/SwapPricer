@@ -18,10 +18,10 @@ derivative in the world and now you can easily price it in R. More
 details on the financial characteristics of this contract can be found
 [here](https://en.wikipedia.org/wiki/Interest_rate_swap)
 
-Please note that as at version 0.2.0 the toolbox is able to price using
+Please note that as at version 1.0.1 the toolbox is able to price using
 just a one-curve framework but is able to price multiple currencies (ie.
 CHF, EUR, GBP, JPY and USD) and any convention in terms of coupon
-frequency, day count convention and holiday calendar.
+frequency, day count convention.
 
 **We are working to introduce OIS Discounting in the next releases**
 
