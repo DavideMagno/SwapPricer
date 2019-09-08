@@ -75,7 +75,7 @@ CashflowCalculation  <- function(today, start.date, maturity.date, type,
     if (stringr::str_detect(type, "floating")) {
       lag <- swap.standard.calendar[
         grepl(currency,  swap.standard.calendar$currency),][["lag"]]
-      fixing.date <- AdvanceDate(accrual.date - lag, currency, TRUE)
+      fixing.date <- AdvanceDate(accrual.date - lag, currency, FALSE)
     } else {
       fixing.date <- NULL
     }
@@ -164,6 +164,7 @@ OLDParSwapRateCalculation <- function(swap.dates, swap, df.table) {
 #' @importFrom purrr pluck
 AccrualCalculation <- function(swap.dates, leg.type, swap, direction,
                              floating.history) {
+  browser()
   if (!is.null(swap.dates$fixing.date)) {
     floating.history <- floating.history[
       grepl(swap$currency, floating.history$currency) &

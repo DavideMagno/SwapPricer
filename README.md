@@ -18,7 +18,7 @@ derivative in the world and now you can easily price it in R. More
 details on the financial characteristics of this contract can be found
 [here](https://en.wikipedia.org/wiki/Interest_rate_swap)
 
-Please note that as at version 1.0.1 the toolbox is able to price using
+Please note that as at version 1.0.2 the toolbox is able to price using
 just a one-curve framework but is able to price multiple currencies (ie.
 CHF, EUR, GBP, JPY and USD) and any convention in terms of coupon
 frequency, day count convention.
@@ -126,12 +126,6 @@ dcc.receive
 
 </th>
 
-<th style="text-align:left;">
-
-calendar
-
-</th>
-
 </tr>
 
 </thead>
@@ -195,12 +189,6 @@ NA
 </td>
 
 <td style="text-align:right;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
 
 NA
 
@@ -294,12 +282,6 @@ NA
 
 </td>
 
-<td style="text-align:left;">
-
-NA
-
-</td>
-
 </tr>
 
 <tr>
@@ -376,12 +358,6 @@ NA
 
 </td>
 
-<td style="text-align:left;">
-
-NA
-
-</td>
-
 </tr>
 
 <tr>
@@ -441,12 +417,6 @@ NA
 </td>
 
 <td style="text-align:right;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
 
 NA
 
@@ -540,12 +510,6 @@ act/365
 
 </td>
 
-<td style="text-align:left;">
-
-TARGET
-
-</td>
-
 </tr>
 
 <tr>
@@ -619,12 +583,6 @@ act/365
 <td style="text-align:left;">
 
 act/365
-
-</td>
-
-<td style="text-align:left;">
-
-TARGET
 
 </td>
 
@@ -704,12 +662,6 @@ act/365
 
 </td>
 
-<td style="text-align:left;">
-
-UnitedKingdom
-
-</td>
-
 </tr>
 
 <tr>
@@ -783,12 +735,6 @@ act/365
 <td style="text-align:left;">
 
 act/365
-
-</td>
-
-<td style="text-align:left;">
-
-TARGET
 
 </td>
 
@@ -868,12 +814,6 @@ act/360
 
 </td>
 
-<td style="text-align:left;">
-
-TARGET
-
-</td>
-
 </tr>
 
 </tbody>
@@ -924,6 +864,444 @@ SwapPricer::SwapPortfolioPricing(SwapPricer::swap.basket, today,
 
 This function returns a table that can be easily used for reporting like
 below
+
+    #> Called from: AccrualCalculation(.x, .y, swap, direction, floating.history)
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#168: if (!is.null(swap.dates$fixing.date)) {
+    #>     floating.history <- floating.history[grepl(swap$currency, 
+    #>         floating.history$currency) & floating.history$time.unit == 
+    #>         swap$time.unit[[leg.type]], "rate.data"]
+    #>     floating.history <- purrr::flatten(floating.history$rate.data)[[1]]
+    #>     fixing.row <- floating.history[floating.history$date %in% 
+    #>         swap.dates$fixing.date, ]
+    #>     if (nrow(fixing.row) == 0) {
+    #>         closest.dates <- (floating.history$date - swap.dates$fixing.date)
+    #>         fixing.row <- floating.history[which(closest.dates == 
+    #>             max(closest.dates[closest.dates < 0])), ]
+    #>     }
+    #>     rate <- fixing.row[["value"]]/100
+    #> } else {
+    #>     rate <- swap$strike
+    #> }
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#169: floating.history <- floating.history[grepl(swap$currency, floating.history$currency) & 
+    #>     floating.history$time.unit == swap$time.unit[[leg.type]], 
+    #>     "rate.data"]
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#172: floating.history <- purrr::flatten(floating.history$rate.data)[[1]]
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#174: fixing.row <- floating.history[floating.history$date %in% swap.dates$fixing.date, 
+    #>     ]
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#177: if (nrow(fixing.row) == 0) {
+    #>     closest.dates <- (floating.history$date - swap.dates$fixing.date)
+    #>     fixing.row <- floating.history[which(closest.dates == max(closest.dates[closest.dates < 
+    #>         0])), ]
+    #> }
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#183: rate <- fixing.row[["value"]]/100
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#189: swap.dates %>% purrr::pluck("accrual.yf") %>% *(swap$notional * 
+    #>     rate * switch(leg.type, pay = -1, receive = 1))
+    #> Called from: AccrualCalculation(.x, .y, swap, direction, floating.history)
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#168: if (!is.null(swap.dates$fixing.date)) {
+    #>     floating.history <- floating.history[grepl(swap$currency, 
+    #>         floating.history$currency) & floating.history$time.unit == 
+    #>         swap$time.unit[[leg.type]], "rate.data"]
+    #>     floating.history <- purrr::flatten(floating.history$rate.data)[[1]]
+    #>     fixing.row <- floating.history[floating.history$date %in% 
+    #>         swap.dates$fixing.date, ]
+    #>     if (nrow(fixing.row) == 0) {
+    #>         closest.dates <- (floating.history$date - swap.dates$fixing.date)
+    #>         fixing.row <- floating.history[which(closest.dates == 
+    #>             max(closest.dates[closest.dates < 0])), ]
+    #>     }
+    #>     rate <- fixing.row[["value"]]/100
+    #> } else {
+    #>     rate <- swap$strike
+    #> }
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#186: rate <- swap$strike
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#189: swap.dates %>% purrr::pluck("accrual.yf") %>% *(swap$notional * 
+    #>     rate * switch(leg.type, pay = -1, receive = 1))
+    #> Called from: AccrualCalculation(.x, .y, swap, direction, floating.history)
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#168: if (!is.null(swap.dates$fixing.date)) {
+    #>     floating.history <- floating.history[grepl(swap$currency, 
+    #>         floating.history$currency) & floating.history$time.unit == 
+    #>         swap$time.unit[[leg.type]], "rate.data"]
+    #>     floating.history <- purrr::flatten(floating.history$rate.data)[[1]]
+    #>     fixing.row <- floating.history[floating.history$date %in% 
+    #>         swap.dates$fixing.date, ]
+    #>     if (nrow(fixing.row) == 0) {
+    #>         closest.dates <- (floating.history$date - swap.dates$fixing.date)
+    #>         fixing.row <- floating.history[which(closest.dates == 
+    #>             max(closest.dates[closest.dates < 0])), ]
+    #>     }
+    #>     rate <- fixing.row[["value"]]/100
+    #> } else {
+    #>     rate <- swap$strike
+    #> }
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#186: rate <- swap$strike
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#189: swap.dates %>% purrr::pluck("accrual.yf") %>% *(swap$notional * 
+    #>     rate * switch(leg.type, pay = -1, receive = 1))
+    #> Called from: AccrualCalculation(.x, .y, swap, direction, floating.history)
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#168: if (!is.null(swap.dates$fixing.date)) {
+    #>     floating.history <- floating.history[grepl(swap$currency, 
+    #>         floating.history$currency) & floating.history$time.unit == 
+    #>         swap$time.unit[[leg.type]], "rate.data"]
+    #>     floating.history <- purrr::flatten(floating.history$rate.data)[[1]]
+    #>     fixing.row <- floating.history[floating.history$date %in% 
+    #>         swap.dates$fixing.date, ]
+    #>     if (nrow(fixing.row) == 0) {
+    #>         closest.dates <- (floating.history$date - swap.dates$fixing.date)
+    #>         fixing.row <- floating.history[which(closest.dates == 
+    #>             max(closest.dates[closest.dates < 0])), ]
+    #>     }
+    #>     rate <- fixing.row[["value"]]/100
+    #> } else {
+    #>     rate <- swap$strike
+    #> }
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#169: floating.history <- floating.history[grepl(swap$currency, floating.history$currency) & 
+    #>     floating.history$time.unit == swap$time.unit[[leg.type]], 
+    #>     "rate.data"]
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#172: floating.history <- purrr::flatten(floating.history$rate.data)[[1]]
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#174: fixing.row <- floating.history[floating.history$date %in% swap.dates$fixing.date, 
+    #>     ]
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#177: if (nrow(fixing.row) == 0) {
+    #>     closest.dates <- (floating.history$date - swap.dates$fixing.date)
+    #>     fixing.row <- floating.history[which(closest.dates == max(closest.dates[closest.dates < 
+    #>         0])), ]
+    #> }
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#183: rate <- fixing.row[["value"]]/100
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#189: swap.dates %>% purrr::pluck("accrual.yf") %>% *(swap$notional * 
+    #>     rate * switch(leg.type, pay = -1, receive = 1))
+    #> Called from: AccrualCalculation(.x, .y, swap, direction, floating.history)
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#168: if (!is.null(swap.dates$fixing.date)) {
+    #>     floating.history <- floating.history[grepl(swap$currency, 
+    #>         floating.history$currency) & floating.history$time.unit == 
+    #>         swap$time.unit[[leg.type]], "rate.data"]
+    #>     floating.history <- purrr::flatten(floating.history$rate.data)[[1]]
+    #>     fixing.row <- floating.history[floating.history$date %in% 
+    #>         swap.dates$fixing.date, ]
+    #>     if (nrow(fixing.row) == 0) {
+    #>         closest.dates <- (floating.history$date - swap.dates$fixing.date)
+    #>         fixing.row <- floating.history[which(closest.dates == 
+    #>             max(closest.dates[closest.dates < 0])), ]
+    #>     }
+    #>     rate <- fixing.row[["value"]]/100
+    #> } else {
+    #>     rate <- swap$strike
+    #> }
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#169: floating.history <- floating.history[grepl(swap$currency, floating.history$currency) & 
+    #>     floating.history$time.unit == swap$time.unit[[leg.type]], 
+    #>     "rate.data"]
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#172: floating.history <- purrr::flatten(floating.history$rate.data)[[1]]
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#174: fixing.row <- floating.history[floating.history$date %in% swap.dates$fixing.date, 
+    #>     ]
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#177: if (nrow(fixing.row) == 0) {
+    #>     closest.dates <- (floating.history$date - swap.dates$fixing.date)
+    #>     fixing.row <- floating.history[which(closest.dates == max(closest.dates[closest.dates < 
+    #>         0])), ]
+    #> }
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#183: rate <- fixing.row[["value"]]/100
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#189: swap.dates %>% purrr::pluck("accrual.yf") %>% *(swap$notional * 
+    #>     rate * switch(leg.type, pay = -1, receive = 1))
+    #> Called from: AccrualCalculation(.x, .y, swap, direction, floating.history)
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#168: if (!is.null(swap.dates$fixing.date)) {
+    #>     floating.history <- floating.history[grepl(swap$currency, 
+    #>         floating.history$currency) & floating.history$time.unit == 
+    #>         swap$time.unit[[leg.type]], "rate.data"]
+    #>     floating.history <- purrr::flatten(floating.history$rate.data)[[1]]
+    #>     fixing.row <- floating.history[floating.history$date %in% 
+    #>         swap.dates$fixing.date, ]
+    #>     if (nrow(fixing.row) == 0) {
+    #>         closest.dates <- (floating.history$date - swap.dates$fixing.date)
+    #>         fixing.row <- floating.history[which(closest.dates == 
+    #>             max(closest.dates[closest.dates < 0])), ]
+    #>     }
+    #>     rate <- fixing.row[["value"]]/100
+    #> } else {
+    #>     rate <- swap$strike
+    #> }
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#186: rate <- swap$strike
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#189: swap.dates %>% purrr::pluck("accrual.yf") %>% *(swap$notional * 
+    #>     rate * switch(leg.type, pay = -1, receive = 1))
+    #> Called from: AccrualCalculation(.x, .y, swap, direction, floating.history)
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#168: if (!is.null(swap.dates$fixing.date)) {
+    #>     floating.history <- floating.history[grepl(swap$currency, 
+    #>         floating.history$currency) & floating.history$time.unit == 
+    #>         swap$time.unit[[leg.type]], "rate.data"]
+    #>     floating.history <- purrr::flatten(floating.history$rate.data)[[1]]
+    #>     fixing.row <- floating.history[floating.history$date %in% 
+    #>         swap.dates$fixing.date, ]
+    #>     if (nrow(fixing.row) == 0) {
+    #>         closest.dates <- (floating.history$date - swap.dates$fixing.date)
+    #>         fixing.row <- floating.history[which(closest.dates == 
+    #>             max(closest.dates[closest.dates < 0])), ]
+    #>     }
+    #>     rate <- fixing.row[["value"]]/100
+    #> } else {
+    #>     rate <- swap$strike
+    #> }
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#186: rate <- swap$strike
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#189: swap.dates %>% purrr::pluck("accrual.yf") %>% *(swap$notional * 
+    #>     rate * switch(leg.type, pay = -1, receive = 1))
+    #> Called from: AccrualCalculation(.x, .y, swap, direction, floating.history)
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#168: if (!is.null(swap.dates$fixing.date)) {
+    #>     floating.history <- floating.history[grepl(swap$currency, 
+    #>         floating.history$currency) & floating.history$time.unit == 
+    #>         swap$time.unit[[leg.type]], "rate.data"]
+    #>     floating.history <- purrr::flatten(floating.history$rate.data)[[1]]
+    #>     fixing.row <- floating.history[floating.history$date %in% 
+    #>         swap.dates$fixing.date, ]
+    #>     if (nrow(fixing.row) == 0) {
+    #>         closest.dates <- (floating.history$date - swap.dates$fixing.date)
+    #>         fixing.row <- floating.history[which(closest.dates == 
+    #>             max(closest.dates[closest.dates < 0])), ]
+    #>     }
+    #>     rate <- fixing.row[["value"]]/100
+    #> } else {
+    #>     rate <- swap$strike
+    #> }
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#186: rate <- swap$strike
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#189: swap.dates %>% purrr::pluck("accrual.yf") %>% *(swap$notional * 
+    #>     rate * switch(leg.type, pay = -1, receive = 1))
+    #> Called from: AccrualCalculation(.x, .y, swap, direction, floating.history)
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#168: if (!is.null(swap.dates$fixing.date)) {
+    #>     floating.history <- floating.history[grepl(swap$currency, 
+    #>         floating.history$currency) & floating.history$time.unit == 
+    #>         swap$time.unit[[leg.type]], "rate.data"]
+    #>     floating.history <- purrr::flatten(floating.history$rate.data)[[1]]
+    #>     fixing.row <- floating.history[floating.history$date %in% 
+    #>         swap.dates$fixing.date, ]
+    #>     if (nrow(fixing.row) == 0) {
+    #>         closest.dates <- (floating.history$date - swap.dates$fixing.date)
+    #>         fixing.row <- floating.history[which(closest.dates == 
+    #>             max(closest.dates[closest.dates < 0])), ]
+    #>     }
+    #>     rate <- fixing.row[["value"]]/100
+    #> } else {
+    #>     rate <- swap$strike
+    #> }
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#186: rate <- swap$strike
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#189: swap.dates %>% purrr::pluck("accrual.yf") %>% *(swap$notional * 
+    #>     rate * switch(leg.type, pay = -1, receive = 1))
+    #> Called from: AccrualCalculation(.x, .y, swap, direction, floating.history)
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#168: if (!is.null(swap.dates$fixing.date)) {
+    #>     floating.history <- floating.history[grepl(swap$currency, 
+    #>         floating.history$currency) & floating.history$time.unit == 
+    #>         swap$time.unit[[leg.type]], "rate.data"]
+    #>     floating.history <- purrr::flatten(floating.history$rate.data)[[1]]
+    #>     fixing.row <- floating.history[floating.history$date %in% 
+    #>         swap.dates$fixing.date, ]
+    #>     if (nrow(fixing.row) == 0) {
+    #>         closest.dates <- (floating.history$date - swap.dates$fixing.date)
+    #>         fixing.row <- floating.history[which(closest.dates == 
+    #>             max(closest.dates[closest.dates < 0])), ]
+    #>     }
+    #>     rate <- fixing.row[["value"]]/100
+    #> } else {
+    #>     rate <- swap$strike
+    #> }
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#169: floating.history <- floating.history[grepl(swap$currency, floating.history$currency) & 
+    #>     floating.history$time.unit == swap$time.unit[[leg.type]], 
+    #>     "rate.data"]
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#172: floating.history <- purrr::flatten(floating.history$rate.data)[[1]]
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#174: fixing.row <- floating.history[floating.history$date %in% swap.dates$fixing.date, 
+    #>     ]
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#177: if (nrow(fixing.row) == 0) {
+    #>     closest.dates <- (floating.history$date - swap.dates$fixing.date)
+    #>     fixing.row <- floating.history[which(closest.dates == max(closest.dates[closest.dates < 
+    #>         0])), ]
+    #> }
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#183: rate <- fixing.row[["value"]]/100
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#189: swap.dates %>% purrr::pluck("accrual.yf") %>% *(swap$notional * 
+    #>     rate * switch(leg.type, pay = -1, receive = 1))
+    #> Called from: AccrualCalculation(.x, .y, swap, direction, floating.history)
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#168: if (!is.null(swap.dates$fixing.date)) {
+    #>     floating.history <- floating.history[grepl(swap$currency, 
+    #>         floating.history$currency) & floating.history$time.unit == 
+    #>         swap$time.unit[[leg.type]], "rate.data"]
+    #>     floating.history <- purrr::flatten(floating.history$rate.data)[[1]]
+    #>     fixing.row <- floating.history[floating.history$date %in% 
+    #>         swap.dates$fixing.date, ]
+    #>     if (nrow(fixing.row) == 0) {
+    #>         closest.dates <- (floating.history$date - swap.dates$fixing.date)
+    #>         fixing.row <- floating.history[which(closest.dates == 
+    #>             max(closest.dates[closest.dates < 0])), ]
+    #>     }
+    #>     rate <- fixing.row[["value"]]/100
+    #> } else {
+    #>     rate <- swap$strike
+    #> }
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#186: rate <- swap$strike
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#189: swap.dates %>% purrr::pluck("accrual.yf") %>% *(swap$notional * 
+    #>     rate * switch(leg.type, pay = -1, receive = 1))
+    #> Called from: AccrualCalculation(.x, .y, swap, direction, floating.history)
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#168: if (!is.null(swap.dates$fixing.date)) {
+    #>     floating.history <- floating.history[grepl(swap$currency, 
+    #>         floating.history$currency) & floating.history$time.unit == 
+    #>         swap$time.unit[[leg.type]], "rate.data"]
+    #>     floating.history <- purrr::flatten(floating.history$rate.data)[[1]]
+    #>     fixing.row <- floating.history[floating.history$date %in% 
+    #>         swap.dates$fixing.date, ]
+    #>     if (nrow(fixing.row) == 0) {
+    #>         closest.dates <- (floating.history$date - swap.dates$fixing.date)
+    #>         fixing.row <- floating.history[which(closest.dates == 
+    #>             max(closest.dates[closest.dates < 0])), ]
+    #>     }
+    #>     rate <- fixing.row[["value"]]/100
+    #> } else {
+    #>     rate <- swap$strike
+    #> }
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#169: floating.history <- floating.history[grepl(swap$currency, floating.history$currency) & 
+    #>     floating.history$time.unit == swap$time.unit[[leg.type]], 
+    #>     "rate.data"]
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#172: floating.history <- purrr::flatten(floating.history$rate.data)[[1]]
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#174: fixing.row <- floating.history[floating.history$date %in% swap.dates$fixing.date, 
+    #>     ]
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#177: if (nrow(fixing.row) == 0) {
+    #>     closest.dates <- (floating.history$date - swap.dates$fixing.date)
+    #>     fixing.row <- floating.history[which(closest.dates == max(closest.dates[closest.dates < 
+    #>         0])), ]
+    #> }
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#183: rate <- fixing.row[["value"]]/100
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#189: swap.dates %>% purrr::pluck("accrual.yf") %>% *(swap$notional * 
+    #>     rate * switch(leg.type, pay = -1, receive = 1))
+    #> Called from: AccrualCalculation(.x, .y, swap, direction, floating.history)
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#168: if (!is.null(swap.dates$fixing.date)) {
+    #>     floating.history <- floating.history[grepl(swap$currency, 
+    #>         floating.history$currency) & floating.history$time.unit == 
+    #>         swap$time.unit[[leg.type]], "rate.data"]
+    #>     floating.history <- purrr::flatten(floating.history$rate.data)[[1]]
+    #>     fixing.row <- floating.history[floating.history$date %in% 
+    #>         swap.dates$fixing.date, ]
+    #>     if (nrow(fixing.row) == 0) {
+    #>         closest.dates <- (floating.history$date - swap.dates$fixing.date)
+    #>         fixing.row <- floating.history[which(closest.dates == 
+    #>             max(closest.dates[closest.dates < 0])), ]
+    #>     }
+    #>     rate <- fixing.row[["value"]]/100
+    #> } else {
+    #>     rate <- swap$strike
+    #> }
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#169: floating.history <- floating.history[grepl(swap$currency, floating.history$currency) & 
+    #>     floating.history$time.unit == swap$time.unit[[leg.type]], 
+    #>     "rate.data"]
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#172: floating.history <- purrr::flatten(floating.history$rate.data)[[1]]
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#174: fixing.row <- floating.history[floating.history$date %in% swap.dates$fixing.date, 
+    #>     ]
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#177: if (nrow(fixing.row) == 0) {
+    #>     closest.dates <- (floating.history$date - swap.dates$fixing.date)
+    #>     fixing.row <- floating.history[which(closest.dates == max(closest.dates[closest.dates < 
+    #>         0])), ]
+    #> }
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#183: rate <- fixing.row[["value"]]/100
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#189: swap.dates %>% purrr::pluck("accrual.yf") %>% *(swap$notional * 
+    #>     rate * switch(leg.type, pay = -1, receive = 1))
+    #> Called from: AccrualCalculation(.x, .y, swap, direction, floating.history)
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#168: if (!is.null(swap.dates$fixing.date)) {
+    #>     floating.history <- floating.history[grepl(swap$currency, 
+    #>         floating.history$currency) & floating.history$time.unit == 
+    #>         swap$time.unit[[leg.type]], "rate.data"]
+    #>     floating.history <- purrr::flatten(floating.history$rate.data)[[1]]
+    #>     fixing.row <- floating.history[floating.history$date %in% 
+    #>         swap.dates$fixing.date, ]
+    #>     if (nrow(fixing.row) == 0) {
+    #>         closest.dates <- (floating.history$date - swap.dates$fixing.date)
+    #>         fixing.row <- floating.history[which(closest.dates == 
+    #>             max(closest.dates[closest.dates < 0])), ]
+    #>     }
+    #>     rate <- fixing.row[["value"]]/100
+    #> } else {
+    #>     rate <- swap$strike
+    #> }
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#186: rate <- swap$strike
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#189: swap.dates %>% purrr::pluck("accrual.yf") %>% *(swap$notional * 
+    #>     rate * switch(leg.type, pay = -1, receive = 1))
+    #> Called from: AccrualCalculation(.x, .y, swap, direction, floating.history)
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#168: if (!is.null(swap.dates$fixing.date)) {
+    #>     floating.history <- floating.history[grepl(swap$currency, 
+    #>         floating.history$currency) & floating.history$time.unit == 
+    #>         swap$time.unit[[leg.type]], "rate.data"]
+    #>     floating.history <- purrr::flatten(floating.history$rate.data)[[1]]
+    #>     fixing.row <- floating.history[floating.history$date %in% 
+    #>         swap.dates$fixing.date, ]
+    #>     if (nrow(fixing.row) == 0) {
+    #>         closest.dates <- (floating.history$date - swap.dates$fixing.date)
+    #>         fixing.row <- floating.history[which(closest.dates == 
+    #>             max(closest.dates[closest.dates < 0])), ]
+    #>     }
+    #>     rate <- fixing.row[["value"]]/100
+    #> } else {
+    #>     rate <- swap$strike
+    #> }
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#169: floating.history <- floating.history[grepl(swap$currency, floating.history$currency) & 
+    #>     floating.history$time.unit == swap$time.unit[[leg.type]], 
+    #>     "rate.data"]
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#172: floating.history <- purrr::flatten(floating.history$rate.data)[[1]]
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#174: fixing.row <- floating.history[floating.history$date %in% swap.dates$fixing.date, 
+    #>     ]
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#177: if (nrow(fixing.row) == 0) {
+    #>     closest.dates <- (floating.history$date - swap.dates$fixing.date)
+    #>     fixing.row <- floating.history[which(closest.dates == max(closest.dates[closest.dates < 
+    #>         0])), ]
+    #> }
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#183: rate <- fixing.row[["value"]]/100
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#189: swap.dates %>% purrr::pluck("accrual.yf") %>% *(swap$notional * 
+    #>     rate * switch(leg.type, pay = -1, receive = 1))
+    #> Called from: AccrualCalculation(.x, .y, swap, direction, floating.history)
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#168: if (!is.null(swap.dates$fixing.date)) {
+    #>     floating.history <- floating.history[grepl(swap$currency, 
+    #>         floating.history$currency) & floating.history$time.unit == 
+    #>         swap$time.unit[[leg.type]], "rate.data"]
+    #>     floating.history <- purrr::flatten(floating.history$rate.data)[[1]]
+    #>     fixing.row <- floating.history[floating.history$date %in% 
+    #>         swap.dates$fixing.date, ]
+    #>     if (nrow(fixing.row) == 0) {
+    #>         closest.dates <- (floating.history$date - swap.dates$fixing.date)
+    #>         fixing.row <- floating.history[which(closest.dates == 
+    #>             max(closest.dates[closest.dates < 0])), ]
+    #>     }
+    #>     rate <- fixing.row[["value"]]/100
+    #> } else {
+    #>     rate <- swap$strike
+    #> }
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#186: rate <- swap$strike
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#189: swap.dates %>% purrr::pluck("accrual.yf") %>% *(swap$notional * 
+    #>     rate * switch(leg.type, pay = -1, receive = 1))
+    #> Called from: AccrualCalculation(.x, .y, swap, direction, floating.history)
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#168: if (!is.null(swap.dates$fixing.date)) {
+    #>     floating.history <- floating.history[grepl(swap$currency, 
+    #>         floating.history$currency) & floating.history$time.unit == 
+    #>         swap$time.unit[[leg.type]], "rate.data"]
+    #>     floating.history <- purrr::flatten(floating.history$rate.data)[[1]]
+    #>     fixing.row <- floating.history[floating.history$date %in% 
+    #>         swap.dates$fixing.date, ]
+    #>     if (nrow(fixing.row) == 0) {
+    #>         closest.dates <- (floating.history$date - swap.dates$fixing.date)
+    #>         fixing.row <- floating.history[which(closest.dates == 
+    #>             max(closest.dates[closest.dates < 0])), ]
+    #>     }
+    #>     rate <- fixing.row[["value"]]/100
+    #> } else {
+    #>     rate <- swap$strike
+    #> }
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#186: rate <- swap$strike
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#189: swap.dates %>% purrr::pluck("accrual.yf") %>% *(swap$notional * 
+    #>     rate * switch(leg.type, pay = -1, receive = 1))
+    #> Called from: AccrualCalculation(.x, .y, swap, direction, floating.history)
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#168: if (!is.null(swap.dates$fixing.date)) {
+    #>     floating.history <- floating.history[grepl(swap$currency, 
+    #>         floating.history$currency) & floating.history$time.unit == 
+    #>         swap$time.unit[[leg.type]], "rate.data"]
+    #>     floating.history <- purrr::flatten(floating.history$rate.data)[[1]]
+    #>     fixing.row <- floating.history[floating.history$date %in% 
+    #>         swap.dates$fixing.date, ]
+    #>     if (nrow(fixing.row) == 0) {
+    #>         closest.dates <- (floating.history$date - swap.dates$fixing.date)
+    #>         fixing.row <- floating.history[which(closest.dates == 
+    #>             max(closest.dates[closest.dates < 0])), ]
+    #>     }
+    #>     rate <- fixing.row[["value"]]/100
+    #> } else {
+    #>     rate <- swap$strike
+    #> }
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#186: rate <- swap$strike
+    #> debug at /Users/davidemagno/Documents/R/Pricingverse/SwapPricer/R/IRS.R#189: swap.dates %>% purrr::pluck("accrual.yf") %>% *(swap$notional * 
+    #>     rate * switch(leg.type, pay = -1, receive = 1))
 
 <table class="table table-striped table-hover table-condensed table-responsive" style="margin-left: auto; margin-right: auto;">
 
@@ -1013,13 +1391,13 @@ EUR
 
 <td style="text-align:right;">
 
-\-874,952.12
+\-874,928.79
 
 </td>
 
 <td style="text-align:right;">
 
-5,483.33
+5,506.67
 
 </td>
 
@@ -1221,7 +1599,7 @@ EUR
 
 <td style="text-align:right;">
 
-\-2,861,713.60
+\-2,861,693.88
 
 </td>
 
@@ -1233,7 +1611,7 @@ EUR
 
 <td style="text-align:right;">
 
-\-6,115.07
+\-6,095.34
 
 </td>
 
@@ -1273,7 +1651,7 @@ EUR
 
 <td style="text-align:right;">
 
-\-30,006.28
+\-29,967.92
 
 </td>
 
@@ -1285,7 +1663,7 @@ EUR
 
 <td style="text-align:right;">
 
-\-9,857.53
+\-9,819.18
 
 </td>
 

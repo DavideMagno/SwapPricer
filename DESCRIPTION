@@ -1,7 +1,7 @@
 Package: SwapPricer
 Type: Package
 Title: Pricing of Financial Interest Rate Swaps
-Version: 1.0.1
+Version: 1.0.2
 Author: Davide Magno
 Maintainer: Davide Magno <davide.magno@curiousfrm.com>
 Description: This toolbox calculates the price and risk characteristics of 
