@@ -102,9 +102,15 @@ CashflowCalculation  <- function(today, start.date, maturity.date, type,
 #' year fractions) and discount factors
 #'
 #' @return A list containing the par swap rate and the annuity
-OLDParSwapRateAlgorithm <- function(swap.cf){
+OISParSwapRateAlgorithm <- function(swap.cf, type){
 
-  num <- (swap.cf$df[1] - swap.cf$df[dim(swap.cf)[1]])
+  if (grepl("OIS", type)) {
+    num <- (swap.cf$df[1] - swap.cf$df[dim(swap.cf)[1]])
+  } else {
+    num <- sum(prod(c(diff(swap.cf$yf),
+                      swap.cf$df[2:dim(swap.cf)[1]],
+                      swap.cf$forward[2:dim(swap.cf)[1]])))
+  }
   annuity <- (sum(diff(swap.cf$yf)*swap.cf$df[2:dim(swap.cf)[1]]))
   return(list(swap.rate = num/annuity,
               annuity = annuity))
@@ -133,7 +139,6 @@ OLDParSwapRateAlgorithm <- function(swap.cf){
 
 
 OLDParSwapRateCalculation <- function(swap.dates, swap, df.table) {
-  browser()
   switch(swap$type$pay,
          "fixed" = swap.dates$pay$cashflows,
          "floating" = swap.dates$receive$cashflows) %>%
