@@ -58,10 +58,10 @@ AdvanceDate <- function(dates, currency, eom.check) {
 #' @export
 CashflowCalculation  <- function(today, start.date, maturity.date, type,
                                      time.unit, dcc, calendar, currency) {
+
   eom.check <- (lubridate::ceiling_date(start.date, "month") - lubridate::days(1)) == start.date
   s <- lubridate::year(start.date)
   m <- lubridate::year(maturity.date)
-
   months.forward <- ((seq_len((m - s) * (12/time.unit) + 1) - 1) * time.unit)
   cashflows <- (start.date %m+% months(months.forward, abbreviate = TRUE)) %>%
     AdvanceDate(currency, eom.check)
@@ -236,7 +236,7 @@ SwapPricing <- function(swap.dates, swap, today, floating.history, curves) {
 
   pv01 <- swap$notional/10000 * swap.par.pricing$annuity * direction
 
-  list(currency = swap$currency, clean.mv = mv,
+  list(currency = swap$currency, notional = swap$notional, clean.mv = mv,
        dirty.mv = mv + accrual$pay + accrual$receive, accrual.pay = accrual$pay,
        accrual.receive = accrual$receive, par = swap.par.pricing$swap.rate,
        pv01 = pv01)
@@ -285,8 +285,19 @@ SwapCashFlowCalculation <- function(today, swap) {
 #' @export
 SwapPortfolioPricing <- function(swap.portfolio, today, ...) {
 
-  # Manage swap portfolio
+  # Manage additional inputs
+  df.curves <- list(...) %>%
+    {.[!purrr::map_lgl(list(...), is.data.frame)]}
 
+  variable.ts <- list(...) %>%
+    {.[purrr::map_lgl(list(...), is.data.frame)]} %>%
+    as.data.frame() |>
+    dplyr::mutate_if(is.character,
+                     ~stringr::str_replace_all(.x,"^\\.",NA_character_)) |>
+    tidyr::fill(!DATE, .direction = "down") |>
+    dplyr::mutate_if(is.character, ~as.numeric(.x)/100)
+
+  # Manage swap portfolio
   if (tibble::is_tibble(swap.portfolio)) {
     swap.portfolio %<>%
       dplyr::mutate_at(.vars = dplyr::vars(.data$start.date,
@@ -299,7 +310,7 @@ SwapPortfolioPricing <- function(swap.portfolio, today, ...) {
 
   # Manage curves
 
-  curves <- purrr::set_names(list(...), purrr::map(list(...), "currency")) %>%
+  curves <- purrr::set_names(df.curves, purrr::map(df.curves, "currency")) %>%
     CalculateCurvesDCC(swap.portfolio, today)
 
   # Manage cashflows
@@ -307,7 +318,8 @@ SwapPortfolioPricing <- function(swap.portfolio, today, ...) {
   cashflows <- swap.portfolio %>%
     purrr::map(~SwapCashFlowCalculation(today, .x))
 
-  floating.history <- VariableRateDownload(swap.portfolio, cashflows, today)
+  floating.history <- VariableRateDownload(swap.portfolio, cashflows, today,
+                                           variable.ts)
 
   # Pricing
 

@@ -36,7 +36,7 @@ Two main data structures are needed in order to run the SwapPriceR toolbox:
 
 A swap can be defined as a list that includes the following needed fields:
 
-* **currency** (character) as per the ISO 4217 standard (only `"EUR"` is currently active)
+* **currency** (character) as per the ISO 4217 standard
 * **notional** (numeric)
 * **start.date** (Date)
 * **maturity.date** (Date)
@@ -44,11 +44,10 @@ A swap can be defined as a list that includes the following needed fields:
 * **type** (string) either *payer* or *receiver*. It is not case-sensitive.
 * **standard** (logical) 
 
-Only if the field *standard* is set to FALSE then we need three additional fields
+Only if the field *standard* is set to FALSE then we need four additional fields
 
-* **time.unit** (list) with two sub-fields: *pay* and *receive* and numerical data as per the number of months for the frequency of the leg (ie. monthly would have a time.unit of 1, quarterly of 3, semiannual of 6 and annual of 12)
-* **dcc** (list) with two sub-fields: *pay* and *receive* and numerical data as per the RQuantLib helper
-* **calendar** (character) the holiday's calendar as per the RQuantLib helper
+* **time.unit.pay** and **time.unit.receive** (integer) are the number of months for the frequency of the leg (ie. monthly would have a time.unit of 1, quarterly of 3, semiannual of 6 and annual of 12)
+* **dcc.pay** and *dc..receive* (character) as per the *fmdates* helper
 
 The following one is an example of valid setup for both a standard swap and a non standard one.
 

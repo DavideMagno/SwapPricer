@@ -14,12 +14,22 @@ DownloadRate <- function(floating.data){
                 purrr::set_names(c("date", "value"))))
 }
 
+DownloadRateOffline <- function(input, variable.ts) {
+  variable.ts |>
+    dplyr::mutate(DATE = as.Date(DATE)) |>
+    dplyr::select(DATE, dplyr::matches(input$floating.rate.code)) |>
+    dplyr::filter(DATE >= input$min.date,
+                  DATE <= input$max.date) |>
+    dplyr::rename_all(~c("date", "value")) |>
+    list()
+}
 
 #' @importFrom dplyr group_by summarise left_join ungroup mutate select
 #' @importFrom purrr map_chr map_depth map compact flatten reduce
 #' @importFrom tibble tibble
 #' @importFrom tidyr replace_na nest
-VariableRateDownload <- function(swap.portfolio, cashflows, today) {
+VariableRateDownload <- function(swap.portfolio, cashflows, today,
+                                 variable.ts) {
   currency <- unname(purrr::map_chr(swap.portfolio,"currency"))
   time.unit <- unname(unlist(purrr::map_depth(swap.portfolio, 1, "floating.freq")))
 
@@ -55,8 +65,8 @@ VariableRateDownload <- function(swap.portfolio, cashflows, today) {
     }
   }
 
-  floating.rate %>%
+  floating.rate <- floating.rate %>%
     tidyr::nest(-currency, -time.unit) %>%
-    dplyr::mutate(rate.data = purrr::map(.data$data, DownloadRate)) %>%
+    dplyr::mutate(rate.data = purrr::map(.data$data, ~DownloadRateOffline(.x, variable.ts))) %>%
     dplyr::select(-.data$data)
 }
