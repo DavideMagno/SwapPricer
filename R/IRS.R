@@ -7,14 +7,14 @@ AdvanceDate <- function(dates, currency, eom.check) {
     repeat {
       if (eom.check) {
         dates <- dplyr::case_when((dates %in% holiday) ~ dates - 1,
-                                      (weekdays(dates) %in% "Saturday") ~ dates - 1,
-                                      (weekdays(dates) %in% "Sunday") ~ dates - 2,
-                                      TRUE ~ dates)
+                                  (weekdays(dates) %in% "Saturday") ~ dates - 1,
+                                  (weekdays(dates) %in% "Sunday") ~ dates - 2,
+                                  TRUE ~ dates)
       } else {
         dates <- dplyr::case_when((dates %in% holiday) ~ dates + 1,
-                                      (weekdays(dates) %in% "Saturday") ~ dates + 2,
-                                      (weekdays(dates) %in% "Sunday") ~ dates + 1,
-                                      TRUE ~ dates)
+                                  (weekdays(dates) %in% "Saturday") ~ dates + 2,
+                                  (weekdays(dates) %in% "Sunday") ~ dates + 1,
+                                  TRUE ~ dates)
       }
       check <- TRUE %in% ((dates %in% holiday) |
                             (weekdays(dates) %in% "Saturday") |
@@ -57,7 +57,7 @@ AdvanceDate <- function(dates, currency, eom.check) {
 
 #' @export
 CashflowCalculation  <- function(today, start.date, maturity.date, type,
-                                     time.unit, dcc, calendar, currency) {
+                                 time.unit, dcc, calendar, currency) {
 
   eom.check <- (lubridate::ceiling_date(start.date, "month") - lubridate::days(1)) == start.date
   s <- lubridate::year(start.date)
@@ -110,6 +110,34 @@ OLDParSwapRateAlgorithm <- function(swap.cf){
               annuity = annuity))
 }
 
+
+FixedYieldCalculation <- function(swap.cf, swap, duration.flag) {
+  pricing <- OLDParSwapRateAlgorithm(swap.cf)
+
+  if (duration.flag) {
+    N <- length(swap.cf$yf)
+
+    f <- function(x, ann, yf, N) ann - sum(diff(yf)*exp(-x*yf[2:N]))
+
+    yield <- uniroot(f, interval = c(-0.1, 0.1), ann = pricing$annuity,
+                     yf = swap.cf$yf, N = N)
+    df.yield <- swap.cf %>%
+      dplyr::select(-df) %>%
+      dplyr::mutate(df = exp(-yield$root * yf),
+                    cashflow = c(rep(swap$strike * swap$notional, N - 1),
+                                 (1 + swap$strike) * swap$notional)) %>%
+      dplyr::slice(-1)
+
+    duration <- df.yield  %>%
+      with(sum(yf * df * cashflow)/sum(df * cashflow))
+  } else {
+    duration <- NA_real_
+  }
+
+
+  return(list(pricing = pricing, duration = duration))
+}
+
 #' A function that prepares the data for the swap rate and annuity calculation
 #'
 #' This function in particular selects the leg that is paying fixed as the old
@@ -132,15 +160,16 @@ OLDParSwapRateAlgorithm <- function(swap.cf){
 #' @export
 
 
-OLDParSwapRateCalculation <- function(swap.dates, swap, df.table) {
+OLDParSwapRateCalculation <- function(swap.dates, swap, df.table,
+                                      duration.flag) {
   switch(swap$type$pay,
-         "fixed" = swap.dates$pay$cashflows,
-         "floating" = swap.dates$receive$cashflows) %>%
+                    "fixed" = swap.dates$pay$cashflows,
+                    "floating" = swap.dates$receive$cashflows) %>%
     dplyr::mutate(df = stats::approx(df.table$t2m, log(df.table$df), .data$yf,
                                      ties = mean) %>%
                     purrr::pluck("y") %>%
                     exp) %>%
-    OLDParSwapRateAlgorithm
+    FixedYieldCalculation(swap, duration.flag)
 }
 
 #' A function that calculates the accrual amounts for each leg
@@ -163,7 +192,7 @@ OLDParSwapRateCalculation <- function(swap.dates, swap, df.table) {
 #'
 #' @importFrom purrr pluck
 AccrualCalculation <- function(swap.dates, leg.type, swap, direction,
-                             floating.history) {
+                               floating.history) {
   if (!is.null(swap.dates$fixing.date)) {
     floating.history <- floating.history[
       grepl(swap$currency, floating.history$currency) &
@@ -212,7 +241,9 @@ AccrualCalculation <- function(swap.dates, leg.type, swap, direction,
 #' @importFrom tibble as_tibble
 #'
 #' @export
-SwapPricing <- function(swap.dates, swap, today, floating.history, curves) {
+SwapPricing <- function(swap.dates, swap, today, floating.history, curves,
+                        duration.flag) {
+
   dcc <- dplyr::case_when(
     grepl("fixed", swap$type$pay) ~ swap$dcc$pay,
     grepl("fixed", swap$type$receive) ~ swap$dcc$receive
@@ -224,22 +255,28 @@ SwapPricing <- function(swap.dates, swap, today, floating.history, curves) {
     as_tibble %>%
     purrr::set_names(c("t2m", "df"))
 
-  swap.par.pricing <- OLDParSwapRateCalculation(swap.dates, swap, df.table)
+  swap.par.pricing <- OLDParSwapRateCalculation(swap.dates, swap, df.table,
+                                                duration.flag)
+
   direction <- switch(swap$type$pay, "fixed" = 1, "floating" = -1)
 
-  mv <- swap$notional * swap.par.pricing$annuity *
-    (swap.par.pricing$swap.rate - swap$strike) * direction
+  mv <- swap$notional * swap.par.pricing$pricing$annuity *
+    (swap.par.pricing$pricing$swap.rate - swap$strike) * direction
 
   accrual <- purrr::map2(swap.dates, names(swap$type),
                          ~AccrualCalculation(.x, .y, swap, direction,
-                                           floating.history))
+                                             floating.history))
 
-  pv01 <- swap$notional/10000 * swap.par.pricing$annuity * direction
+  pv01 <- swap$notional/10000 * swap.par.pricing$pricing$annuity * direction
 
-  list(currency = swap$currency, notional = swap$notional, clean.mv = mv,
+  ret <- list(currency = swap$currency, notional = swap$notional, clean.mv = mv,
        dirty.mv = mv + accrual$pay + accrual$receive, accrual.pay = accrual$pay,
-       accrual.receive = accrual$receive, par = swap.par.pricing$swap.rate,
+       accrual.receive = accrual$receive, par = swap.par.pricing$pricing$swap.rate,
        pv01 = pv01)
+
+  if (duration.flag) ret <- c(ret, duration = swap.par.pricing$duration)
+
+  return(ret)
 }
 
 #' Main function that manages the pricing of one interest rate swap
@@ -255,8 +292,8 @@ SwapPricing <- function(swap.dates, swap, today, floating.history, curves) {
 SwapCashFlowCalculation <- function(today, swap) {
   purrr::pmap(list(x = swap$type, y = swap$time.unit, z = swap$dcc),
               ~CashflowCalculation(today, swap$start.date,
-                                       swap$maturity.date, ..1, ..2, ..3,
-                                       swap$calendar, swap$currency))
+                                   swap$maturity.date, ..1, ..2, ..3,
+                                   swap$calendar, swap$currency))
 }
 
 
@@ -283,7 +320,8 @@ SwapCashFlowCalculation <- function(today, swap) {
 #' @importFrom Quandl Quandl
 #'
 #' @export
-SwapPortfolioPricing <- function(swap.portfolio, today, ...) {
+SwapPortfolioPricing <- function(swap.portfolio, today, ...,
+                                 duration.flag = FALSE) {
 
   # Manage additional inputs
   df.curves <- list(...) %>%
@@ -324,7 +362,8 @@ SwapPortfolioPricing <- function(swap.portfolio, today, ...) {
   # Pricing
 
   purrr::map2_df(cashflows, swap.portfolio,
-                 ~SwapPricing(.x, .y, today, floating.history, curves)) %>%
+                 ~SwapPricing(.x, .y, today, floating.history, curves,
+                              duration.flag)) %>%
     dplyr::mutate(swap.id = names(swap.portfolio)) %>%
     dplyr::select(.data$swap.id, dplyr::everything())
 }
